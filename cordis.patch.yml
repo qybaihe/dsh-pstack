@@ -1,0 +1,10 @@
+# The layer a profile gets when it installs this bundle. Each row is one
+# plugin that Plugins can turn on or off by itself. To change a row's config,
+# restate the row by id in your profile's own cordis.patch.yml.
+
+- insert:
+    - id: pstack-skills
+      name: '@qybaihe/dsh-pstack/skills'
+
+    - id: pstack-guard
+      name: '@qybaihe/dsh-pstack/guard'

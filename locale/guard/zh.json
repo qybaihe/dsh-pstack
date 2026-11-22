@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "pstack 命令护栏",
+    "description": "拦截 git add -A、commit -a 和草稿 PR。强推、发布、部署之前先向你确认。"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "pstack shell guard",
+    "description": "Blocks git add -A, commit -a, and draft pull requests. Asks before a force push, a publish, or a deploy."
+  }
+}

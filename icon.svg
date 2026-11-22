@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="pstack">
+  <rect width="64" height="64" rx="14" fill="#1b1a17"/>
+  <rect x="14" y="41" width="36" height="8" rx="4" fill="#8a6a2f"/>
+  <rect x="14" y="28" width="36" height="8" rx="4" fill="#c9972f"/>
+  <rect x="14" y="15" width="36" height="8" rx="4" fill="#f2c84b"/>
+  <circle cx="44" cy="19" r="2" fill="#1b1a17"/>
+</svg>

@@ -1,0 +1,4 @@
+# Overlay for scripts/smoke-dsh.mjs. It mounts the probe beside the bundle.
+- insert:
+    - id: pstack-smoke-probe
+      name: './probe.mjs'
