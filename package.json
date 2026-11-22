@@ -1,0 +1,79 @@
+{
+  "name": "@qybaihe/dsh-pstack",
+  "version": "0.0.1",
+  "description": "pstack for DeepSeek Harness: poteto-mode's skills, with the rules a harness can enforce moved out of the prompt and into the runtime.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qybaihe/dsh-pstack.git"
+  },
+  "homepage": "https://github.com/qybaihe/dsh-pstack#readme",
+  "bugs": {
+    "url": "https://github.com/qybaihe/dsh-pstack/issues"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "cordis",
+    "pstack",
+    "poteto-mode",
+    "skills"
+  ],
+  "exports": {
+    "./skills": {
+      "types": "./lib/skills/index.d.ts",
+      "default": "./lib/skills/index.js"
+    },
+    "./guard": {
+      "types": "./lib/guard/index.d.ts",
+      "default": "./lib/guard/index.js"
+    },
+    "./locale/*.json": "./locale/*.json",
+    "./skills/locale/*.json": "./locale/skills/*.json",
+    "./guard/locale/*.json": "./locale/guard/*.json",
+    "./icon": "./icon.svg",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "vendor",
+    "locale",
+    "cordis.patch.yml",
+    "icon.svg"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test \"src/**/*.test.ts\"",
+    "check": "pnpm run typecheck && pnpm run test && pnpm run build",
+    "smoke": "pnpm run build && node scripts/smoke-dsh.mjs",
+    "sync:pstack": "node scripts/sync-pstack.mjs"
+  },
+  "engines": {
+    "node": ">=24.9.0",
+    "dsh": "^0.2.2-rc.5"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "~4.1.0",
+    "@deepseek-ai/dsh-skill": "^0.2.2-rc.5",
+    "@deepseek-ai/dsh-tools": "^0.2.2-rc.5",
+    "@deepseek-ai/schemastery": "~3.19.0"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "~4.1.0",
+    "@deepseek-ai/dsh-agent": "0.2.2-rc.5",
+    "@deepseek-ai/dsh-skill": "0.2.2-rc.5",
+    "@deepseek-ai/dsh-system-prompt": "0.2.2-rc.5",
+    "@deepseek-ai/dsh-tools": "0.2.2-rc.5",
+    "@deepseek-ai/schemastery": "~3.19.0",
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2"
+  }
+}
