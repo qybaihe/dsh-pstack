@@ -1,0 +1,13 @@
+{
+  "repository": "https://github.com/backnotprop/pstack.git",
+  "commit": "c3464c11c60b1352d5e8f5f0428a3a6943837568",
+  "committedAt": "2026-11-20T17:00:45-05:00",
+  "copied": [
+    "skills",
+    "agents",
+    "LICENSE"
+  ],
+  "excluded": [
+    "skills/statechart/scripts/test"
+  ]
+}
