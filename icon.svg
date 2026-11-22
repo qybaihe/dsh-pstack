@@ -1,7 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="pstack">
-  <rect width="64" height="64" rx="14" fill="#1b1a17"/>
-  <rect x="14" y="41" width="36" height="8" rx="4" fill="#8a6a2f"/>
-  <rect x="14" y="28" width="36" height="8" rx="4" fill="#c9972f"/>
-  <rect x="14" y="15" width="36" height="8" rx="4" fill="#f2c84b"/>
-  <circle cx="44" cy="19" r="2" fill="#1b1a17"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-1 0 34 34" role="img" aria-label="pstack">
+  <path d="M7.5 14.5 6.6 5.2 9.8 8l2.7-4.8L15.2 8l3.2-2.8-.9 9.3z" transform="rotate(-9 12.5 12)" fill="#F2C230" stroke="#C99A12" stroke-width="1.2" stroke-linejoin="round"/>
+  <path d="M5 17.4c1-3.6 4.2-6.3 7.6-6.2 2.2.1 3.4 1.7 5.6 1.8 1.8.1 3-.8 5-.5 3.9.6 6.4 4.5 6 8.9-.5 5.4-5.6 9-11.4 9.4-5.4.4-10.9-1.7-12.7-6.2-1-2.4-.8-4.9-.1-7.2z" fill="#E9D3AE" stroke="#7A4E24" stroke-width="1.6" stroke-linejoin="round"/>
+  <g fill="none" stroke="#7A4E24" stroke-width="1.3" stroke-linecap="round">
+    <path d="M8.6 20.8q1.2-1.1 2.5-.2"/>
+    <path d="M16.3 16.2q1.1 1.1 2.4.3"/>
+    <path d="M13.3 25.9q1.3-.9 2.6.1"/>
+  </g>
+  <circle cx="23.4" cy="18.8" r=".8" fill="#7A4E24"/>
 </svg>

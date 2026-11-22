@@ -63,7 +63,7 @@ export function denialFor(call: Call, config: Config): ToolGuardDenial | undefin
   const verdict = verdictFor(call, config)
   if (verdict.kind !== 'deny') return undefined
   return {
-    reason: `pstack blocked \`${verdict.command}\`. ${verdict.reason} ${verdict.instead}`,
+    reason: `🥔 pstack blocked \`${verdict.command}\`. ${verdict.reason} ${verdict.instead}`,
     info: { name: 'PstackGuardError', code: errorCode(verdict.rule) },
   }
 }
@@ -75,8 +75,8 @@ export function approvalFor(call: Call, config: Config): Extract<PreToolDecision
     kind: 'ask',
     reason: `pstack ${verdict.rule}: ${verdict.command}`,
     displayReason: {
-      en: `pstack pauses for irreversible actions. ${verdict.reason}`,
-      zh: `pstack 对不可逆操作会先停下来确认：${verdict.command}`,
+      en: `🥔 pstack pauses for irreversible actions. ${verdict.reason}`,
+      zh: `🥔 pstack 对不可逆操作会先停下来确认：${verdict.command}`,
     },
   }
 }

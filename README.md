@@ -1,4 +1,4 @@
-# dsh-pstack
+# 🥔 dsh-pstack
 
 [pstack](https://github.com/backnotprop/pstack) 的 DeepSeek Harness 插件：poteto-mode 和它的全部技能，外加一件纯技能做不到的事——**凡是运行时能强制执行的规则，不再靠模型自觉**。
 
@@ -14,7 +14,7 @@ pstack 以 `SKILL.md` 分发，所以“只提交你改过的文件”“先写�
 | TDD 门禁、playbook 进度、决策日志、原则引用审计 | 内核已写好并有测试，尚未接入 DSH |
 | arena、interrogate、swarm 的多模型编排，跨厂商裁判 | 裁判选择已写好，编排未做 |
 | hillclimb 实验台 | 判定逻辑已写好，实验台未做 |
-| Web 界面 | 只有规划和可视稿 |
+| Web 界面：戴王冠的土豆、薯条进度、判定章，对上各技能的 50 多个特有事件 | 只有规划和可视稿 |
 
 “可用” 的两项已在真实的 DSH 0.2.2-rc.5 里加载验证。其余见[路线图](docs/04-roadmap.md)。
 
@@ -81,7 +81,7 @@ docs/          分析、架构、界面规划、路线图
 
 1. [分析：哪些规则该搬进运行时](docs/01-analysis.md)
 2. [架构](docs/02-architecture.md)
-3. [界面规划](docs/03-ui.md)，[可视稿](docs/ui/mockup.html)
+3. [界面规划](docs/03-ui.md)：视觉语言和技能事件对照表。[可视稿](docs/ui/mockup.html)用浏览器打开，可以回放事件
 4. [路线图](docs/04-roadmap.md)
 
 ## 注意

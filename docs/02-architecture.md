@@ -41,9 +41,9 @@ flowchart TB
 | `pstack-skills` | `./skills` | `skills` | 把 vendored 技能注册为技能提供者 | M0，已实现 |
 | `pstack-guard` | `./guard` | `tools` | shell 命令的否决与审批 | M0，已实现 |
 | `pstack` | `.` | `sessionProjections` | 根行。承载客户端半边，登记 Agent Preset 和 DSH 适配提示 | M1 |
-| `pstack-playbook` | `./playbook` | `agents`、`commands`、`sessionProjections` | 识别当前 playbook，写入步骤，按 playbook 收紧工具面 | M1 |
+| `pstack-playbook` | `./playbook` | `agents`、`commands`、`sessionProjections` | 识别当前 playbook，写入步骤，按 playbook 收紧工具面。代理用 `pstack_step` 工具报进度 | M1 |
 | `pstack-tdd` | `./tdd` | `tools`、`commands` | TDD 门禁 | M1 |
-| `pstack-ledger` | `./ledger` | `storageDomain`、`agents` | 决策日志、原则引用审计 | M1 |
+| `pstack-ledger` | `./ledger` | `storageDomain`、`agents` | 决策日志（`pstack_log` 工具）、原则引用审计 | M1 |
 | `pstack-panel` | `./panel` | `subagents`、`llm`、`subprocess`、`shell` | arena、interrogate、swarm 的编排 | M2 |
 | `pstack-bench` | `./bench` | `jobs`、`shell`、`storageDomain` | hillclimb 实验台 | M3 |
 | `pstack-autopilot` | `./autopilot` | `schedule`、`goals`、`subagents` | 无人值守运行与巡检 | M4 |

@@ -3,272 +3,373 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>dsh-pstack 界面规划稿</title>
+<title>🥔 dsh-pstack 界面规划稿</title>
 <style>
-  /* Values copied from DSH's ui-theme (design-platform.css, base.css), so the
-     mock reads like the host. Plugin code must reference the tokens by name. */
+  /* Host values, copied from DSH's ui-theme so the frame reads like the host.
+     Plugin code references these tokens by name and never by value. */
   :root {
     --dsw-alias-bg-base: rgb(255, 255, 255);
-    --dsw-alias-bg-layer-1: rgb(255, 255, 255);
     --dsw-alias-bg-module: rgb(245, 246, 247);
     --dsw-alias-bg-overlay: rgb(233, 236, 242);
-    --dsw-alias-border-l1: rgba(0, 0, 0, 0.04);
+    --dsw-alias-border-l1: rgba(0, 0, 0, 0.05);
     --dsw-alias-border-l2: rgba(0, 0, 0, 0.1);
-    --dsw-alias-border-l3: rgba(0, 0, 0, 0.12);
+    --dsw-alias-border-l3: rgba(0, 0, 0, 0.16);
     --dsw-alias-text-primary: rgb(15, 17, 21);
     --dsw-alias-text-secondary: rgb(97, 102, 107);
     --dsw-alias-text-tertiary: rgb(129, 133, 140);
-    --dsw-alias-brand: rgb(65, 118, 230);
-    --dsw-alias-brand-soft: rgba(65, 118, 230, 0.1);
-    --dsw-alias-state-success: rgb(22, 163, 74);
-    --dsw-alias-state-success-soft: rgba(34, 197, 94, 0.12);
-    --dsw-alias-state-error: rgb(236, 19, 19);
-    --dsw-alias-state-error-soft: rgba(239, 68, 68, 0.1);
-    --dsw-alias-state-warn: rgb(180, 110, 6);
-    --dsw-alias-state-warn-soft: rgba(245, 158, 11, 0.14);
-    --dsw-radius-xs: 4px; --dsw-radius-sm: 8px; --dsw-radius-md: 12px; --dsw-radius-lg: 16px;
     --dsw-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
     --ds-font-family-code: 'SF Mono', 'JetBrains Mono', 'Fira Code', Consolas, monospace;
-    --annot: rgb(190, 60, 160);
+
+    /* The five colours pstack adds. Everything else is the host's. */
+    --p-gold: #F2C230;
+    --p-gold-edge: #C99A12;
+    --p-gold-wash: rgba(242, 194, 48, 0.16);
+    --p-russet: #7A4E24;
+    --p-skin: #E9D3AE;
+    --p-ketchup: #D7261E;
+    --p-ketchup-wash: rgba(215, 38, 30, 0.08);
+    --p-chive: #2E7D46;
+    --p-chive-wash: rgba(46, 125, 70, 0.1);
+    --p-vitelotte: #6B4C9A;
+    --p-vitelotte-wash: rgba(107, 76, 154, 0.1);
+    --p-display: ui-rounded, 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', 'Nunito', var(--dsw-font-family);
+    --annot: #B4369A;
   }
   body[data-dark] {
     --dsw-alias-bg-base: rgb(21, 21, 23);
-    --dsw-alias-bg-layer-1: rgb(35, 35, 36);
-    --dsw-alias-bg-module: rgb(44, 44, 46);
+    --dsw-alias-bg-module: rgb(35, 35, 36);
     --dsw-alias-bg-overlay: rgb(53, 54, 56);
-    --dsw-alias-border-l1: rgba(255, 255, 255, 0.06);
+    --dsw-alias-border-l1: rgba(255, 255, 255, 0.07);
     --dsw-alias-border-l2: rgba(255, 255, 255, 0.12);
-    --dsw-alias-border-l3: rgba(255, 255, 255, 0.16);
+    --dsw-alias-border-l3: rgba(255, 255, 255, 0.2);
     --dsw-alias-text-primary: rgb(249, 250, 251);
     --dsw-alias-text-secondary: rgb(173, 178, 184);
     --dsw-alias-text-tertiary: rgb(129, 133, 140);
-    --dsw-alias-brand: rgb(86, 134, 254);
-    --dsw-alias-brand-soft: rgba(86, 134, 254, 0.16);
-    --dsw-alias-state-success: rgb(74, 222, 128);
-    --dsw-alias-state-error: rgb(248, 113, 113);
-    --dsw-alias-state-warn: rgb(251, 191, 36);
-    --annot: rgb(240, 130, 215);
+    --p-gold-wash: rgba(242, 194, 48, 0.14);
+    --p-russet: #D9A968;
+    --p-skin: #5B4226;
+    --p-ketchup: #FF6257;
+    --p-ketchup-wash: rgba(255, 98, 87, 0.12);
+    --p-chive: #63CC84;
+    --p-chive-wash: rgba(99, 204, 132, 0.12);
+    --p-vitelotte: #B397EA;
+    --p-vitelotte-wash: rgba(179, 151, 234, 0.14);
+    --annot: #F08AD9;
   }
+
   * { box-sizing: border-box; }
   html, body { height: 100%; margin: 0; }
-  body {
-    font: 13px/1.5 var(--dsw-font-family); color: var(--dsw-alias-text-primary);
-    background: var(--dsw-alias-bg-base); -webkit-font-smoothing: antialiased;
-  }
+  body { font: 13px/1.5 var(--dsw-font-family); color: var(--dsw-alias-text-primary); background: var(--dsw-alias-bg-base); -webkit-font-smoothing: antialiased; }
   button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
-  code, .mono { font-family: var(--ds-font-family-code); font-size: 12px; }
+  button:focus-visible { outline: 2px solid var(--p-gold-edge); outline-offset: 2px; }
+  code { font: 12px var(--ds-font-family-code); }
   .muted { color: var(--dsw-alias-text-secondary); }
   .faint { color: var(--dsw-alias-text-tertiary); }
   .num { font-variant-numeric: tabular-nums; }
+  .display { font-family: var(--p-display); font-weight: 700; letter-spacing: -0.01em; }
 
-  .app { display: grid; grid-template-columns: 232px minmax(0, 1fr) 440px; height: 100vh; }
+  /* The potato. An object, not a mascot: its skin, crown and ketchup dab carry state. */
+  .potato { width: 20px; height: 21px; flex: none; --skin: var(--p-skin); --ink: var(--p-russet); overflow: visible; }
+  .potato.lg { width: 34px; height: 36px; }
+  .potato.sm { width: 15px; height: 16px; }
+  [data-mode="on"] .potato { --crown: var(--p-gold); --crown-ink: var(--p-gold-edge); }
+  [data-golden] .potato { --skin: var(--p-gold); --ink: var(--p-gold-edge); }
+  [data-waiting] .potato.live { --dab: var(--p-ketchup); }
 
-  /* Left sidebar */
-  .left { background: var(--dsw-alias-bg-module); border-right: 1px solid var(--dsw-alias-border-l1); padding: 14px 10px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-  .brand { font-weight: 600; font-size: 14px; padding: 4px 8px 12px; }
-  .new { padding: 7px 10px; border-radius: var(--dsw-radius-sm); border: 1px solid var(--dsw-alias-border-l2); text-align: left; margin-bottom: 10px; background: var(--dsw-alias-bg-layer-1); }
-  .group { font-size: 11px; color: var(--dsw-alias-text-tertiary); padding: 8px 8px 4px; }
-  .row { display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: var(--dsw-radius-sm); min-width: 0; }
+  /* Fries: one per playbook step. Raw is hollow, done is fried gold. */
+  .fries { display: flex; gap: 4px; align-items: center; flex: 1; min-width: 72px; }
+  .fries i { height: 8px; flex: 1; border-radius: 2px; border: 1.25px solid var(--dsw-alias-border-l3); }
+  .fries i:nth-child(odd) { transform: rotate(-1.4deg); }
+  .fries i:nth-child(even) { transform: rotate(1.1deg); }
+  .fries i.done { background: var(--p-gold); border-color: var(--p-gold-edge); }
+  .fries i.now { border-color: var(--p-gold-edge); background: linear-gradient(90deg, var(--p-gold) 45%, transparent 45%); }
+
+  /* Stamps: a verdict the runtime reached. Model prose never gets one. */
+  .stamp { display: inline-block; padding: 0 7px; border: 1.5px solid currentColor; border-radius: 5px; font: 800 11px/18px var(--p-display); letter-spacing: 0.08em; transform: rotate(-3deg); white-space: nowrap; flex: none; }
+  .stamp.red { color: var(--p-ketchup); }
+  .stamp.green { color: var(--p-chive); }
+  .stamp.gold { color: #5A3A12; background: var(--p-gold); border-color: var(--p-gold-edge); }
+  .stamp.purple { color: var(--p-vitelotte); }
+  .stamp.mute { color: var(--dsw-alias-text-tertiary); }
+  /* Solid: the runtime decided it. Dashed: an agent reported it. */
+  .stamp.said { border-style: dashed; }
+  .stamp.land { animation: land 260ms cubic-bezier(.2, 1.4, .4, 1); }
+  @keyframes land { from { transform: rotate(-11deg) scale(1.9); opacity: 0; } }
+
+  .tag { display: inline-flex; align-items: center; gap: 5px; padding: 0 8px; border-radius: 999px; font-size: 11px; line-height: 20px; background: var(--dsw-alias-bg-module); color: var(--dsw-alias-text-secondary); white-space: nowrap; }
+  .lamp { width: 7px; height: 7px; border-radius: 50%; background: var(--dsw-alias-border-l3); flex: none; }
+  .lamp.red { background: var(--p-ketchup); }
+  .lamp.green { background: var(--p-chive); }
+  .lamp.gold { background: var(--p-gold); }
+  .lamp.purple { background: var(--p-vitelotte); }
+
+  /* Replay bar: part of this mock, not part of DSH. */
+  .replay { height: 46px; display: flex; align-items: center; gap: 12px; padding: 0 14px; border-bottom: 1px solid var(--dsw-alias-border-l2); background: var(--dsw-alias-bg-module); }
+  .replay .name { font: 700 14px var(--p-display); white-space: nowrap; }
+  .replay .events { display: flex; gap: 6px; overflow-x: auto; flex: 1; padding: 6px 2px; scrollbar-width: none; }
+  .replay .events::-webkit-scrollbar { display: none; }
+  .ev { padding: 3px 10px; border-radius: 999px; border: 1px solid var(--dsw-alias-border-l2); background: var(--dsw-alias-bg-base); white-space: nowrap; font-size: 12px; }
+  .ev b { font-weight: 600; }
+  .ev:hover { border-color: var(--p-gold-edge); }
+  .ev.sep { border: 0; background: none; padding: 3px 2px 3px 8px; color: var(--dsw-alias-text-tertiary); cursor: default; }
+  .toggle { padding: 3px 10px; border-radius: 8px; border: 1px solid var(--dsw-alias-border-l2); font-size: 12px; color: var(--dsw-alias-text-secondary); white-space: nowrap; }
+  .toggle[aria-pressed="true"] { background: var(--p-gold-wash); border-color: var(--p-gold-edge); color: var(--dsw-alias-text-primary); }
+
+  .app { display: grid; grid-template-columns: 236px minmax(0, 1fr) 448px; height: calc(100vh - 46px); overflow-x: clip; }
+
+  /* Left: session list */
+  .left { background: var(--dsw-alias-bg-module); border-right: 1px solid var(--dsw-alias-border-l1); padding: 14px 10px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .brand { font-weight: 600; font-size: 14px; padding: 2px 8px 12px; }
+  .new { padding: 7px 10px; border-radius: 8px; border: 1px solid var(--dsw-alias-border-l2); text-align: left; margin-bottom: 12px; background: var(--dsw-alias-bg-base); }
+  .group { font-size: 11px; color: var(--dsw-alias-text-tertiary); padding: 6px 8px 4px; }
+  .row { display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 8px; min-width: 0; }
   .row.on { background: var(--dsw-alias-bg-overlay); }
   .row .t { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--dsw-alias-text-secondary); flex: none; }
-  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--dsw-alias-text-tertiary); flex: none; }
-  .dot.run { background: var(--dsw-alias-brand); }
-  .dot.wait { background: var(--dsw-alias-state-warn); }
-  .dot.done { background: var(--dsw-alias-state-success); }
+  .trail { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--dsw-alias-text-secondary); flex: none; }
+  .ketchup-count { display: inline-grid; place-items: center; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px 8px 8px 3px; background: var(--p-ketchup); color: #fff; font: 700 10px var(--p-display); }
 
-  /* Center */
+  /* Centre: conversation */
   .center { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
   .head { display: flex; align-items: center; gap: 10px; padding: 12px 20px; border-bottom: 1px solid var(--dsw-alias-border-l1); }
-  .head h1 { font-size: 14px; font-weight: 600; margin: 0; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .ghost { padding: 4px 10px; border-radius: var(--dsw-radius-sm); border: 1px solid var(--dsw-alias-border-l2); font-size: 12px; color: var(--dsw-alias-text-secondary); }
-  .ghost[aria-pressed="true"] { background: var(--dsw-alias-brand-soft); color: var(--dsw-alias-brand); border-color: transparent; }
-  .scroll { flex: 1; min-height: 0; overflow: auto; padding: 22px 20px 8px; }
+  .head h1 { font-size: 14px; font-weight: 600; margin: 0; }
+  .scroll { flex: 1; min-height: 0; overflow: auto; padding: 22px 20px 10px; }
   .col { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
-  .user { align-self: flex-end; background: var(--dsw-alias-bg-module); border-radius: var(--dsw-radius-lg); padding: 9px 14px; max-width: 86%; }
-  .user .slash { color: var(--dsw-alias-brand); font-weight: 500; }
-  .say { line-height: 1.65; font-size: 14px; }
-  .tool { border: 1px solid var(--dsw-alias-border-l2); border-radius: var(--dsw-radius-md); overflow: hidden; }
-  .tool .bar { display: flex; align-items: center; gap: 8px; padding: 8px 12px; }
-  .tool .name { font-weight: 500; }
-  .tool .body { border-top: 1px solid var(--dsw-alias-border-l1); padding: 10px 12px; }
-  .tool.err .body { background: var(--dsw-alias-state-error-soft); }
-  .pill { display: inline-flex; align-items: center; gap: 5px; padding: 1px 8px; border-radius: 999px; font-size: 11px; line-height: 18px; background: var(--dsw-alias-bg-module); color: var(--dsw-alias-text-secondary); white-space: nowrap; }
-  .pill.ok { background: var(--dsw-alias-state-success-soft); color: var(--dsw-alias-state-success); }
-  .pill.bad { background: var(--dsw-alias-state-error-soft); color: var(--dsw-alias-state-error); }
-  .pill.warn { background: var(--dsw-alias-state-warn-soft); color: var(--dsw-alias-state-warn); }
-  .pill.brand { background: var(--dsw-alias-brand-soft); color: var(--dsw-alias-brand); }
-  .seats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-  .seat { border: 1px solid var(--dsw-alias-border-l1); border-radius: var(--dsw-radius-sm); padding: 8px 10px; min-width: 0; }
-  .seat b { display: block; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user { align-self: flex-end; background: var(--dsw-alias-bg-module); border-radius: 16px; padding: 9px 14px; max-width: 86%; }
+  .user .slash { font-weight: 600; background: var(--p-gold-wash); border-radius: 5px; padding: 1px 5px; }
+  .say { line-height: 1.7; font-size: 14px; }
 
-  /* Ketchup card */
-  .ketchup { border: 1px solid var(--dsw-alias-border-l2); border-radius: var(--dsw-radius-md); }
-  .ketchup > header { padding: 10px 14px; font-weight: 600; border-bottom: 1px solid var(--dsw-alias-border-l1); display: flex; gap: 8px; align-items: center; }
-  .call { padding: 12px 14px; border-bottom: 1px solid var(--dsw-alias-border-l1); }
-  .call:last-child { border-bottom: 0; }
-  .call .q { display: flex; gap: 10px; align-items: baseline; }
-  .call .q strong { flex: 1; font-weight: 600; font-size: 14px; }
-  .call ul { margin: 8px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
-  .call li { padding-left: 12px; border-left: 2px solid var(--dsw-alias-border-l2); }
-  .acts { display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px; }
-  .btn { padding: 5px 12px; border-radius: var(--dsw-radius-sm); border: 1px solid var(--dsw-alias-border-l3); font-size: 12px; }
+  /* Host tool rows keep the host look. */
+  .tool { border: 1px solid var(--dsw-alias-border-l2); border-radius: 12px; }
+  .tool .bar { display: flex; align-items: center; gap: 10px; padding: 8px 12px; min-width: 0; }
+  .tool .bar code { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+  .tool .why { border-top: 1px solid var(--dsw-alias-border-l1); padding: 9px 12px; background: var(--p-ketchup-wash); border-radius: 0 0 11px 11px; }
+
+  /* pstack cards: no box. A notch holds the mark, a rule carries the kind. */
+  .pcard { position: relative; padding: 14px 16px 14px 18px; border-radius: 4px 14px 14px 4px; background: var(--dsw-alias-bg-module); border-left: 3px solid var(--p-gold); }
+  .pcard.ketchup { border-left-color: var(--p-ketchup); }
+  .pcard.peel { border-left-color: var(--p-russet); }
+  .pcard > header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .pcard > header h2 { font: 700 15px var(--p-display); margin: 0; flex: 1; }
+  .phases { display: flex; gap: 0; margin: 2px 0 12px; }
+  .phases span { flex: 1; font-size: 11px; color: var(--dsw-alias-text-tertiary); padding-top: 7px; border-top: 2px solid var(--dsw-alias-border-l2); }
+  .phases span.done { border-top-color: var(--p-gold); color: var(--dsw-alias-text-secondary); }
+  .phases span.now { border-top-color: var(--p-russet); color: var(--dsw-alias-text-primary); font-weight: 600; }
+  .seats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .seat b { display: block; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .seat .vendor { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--dsw-alias-text-secondary); }
+  .seat .stamp { margin-top: 6px; }
+  .acts { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
+  .btn { padding: 5px 12px; border-radius: 8px; border: 1px solid var(--dsw-alias-border-l3); font-size: 12px; background: var(--dsw-alias-bg-base); }
   .btn.primary { background: var(--dsw-alias-text-primary); color: var(--dsw-alias-bg-base); border-color: transparent; }
+  .sicko { font: italic 600 14px/1.5 Georgia, 'Songti SC', serif; color: var(--p-russet); }
+  .tally { display: flex; gap: 22px; margin-top: 10px; }
+  .tally b { display: block; font: 700 22px/1.1 var(--p-display); font-variant-numeric: tabular-nums; }
+  .call { padding: 12px 0; border-top: 1px solid var(--dsw-alias-border-l2); }
+  .call:first-of-type { border-top: 0; padding-top: 0; }
+  .call h3 { font: 700 14px var(--p-display); margin: 0; }
+  .call .pick { color: var(--dsw-alias-text-secondary); margin: 2px 0 8px; }
+  .facts { display: grid; grid-template-columns: 40px 1fr; gap: 3px 10px; }
+  .facts dt { color: var(--dsw-alias-text-tertiary); }
+  .facts dd { margin: 0; }
 
-  /* Dock and composer */
+  /* Dock: the strip above the composer */
   .foot { padding: 0 20px 16px; }
-  .foot > div { max-width: 720px; margin: 0 auto; }
-  .dock { display: flex; align-items: center; gap: 12px; padding: 7px 12px; border: 1px solid var(--dsw-alias-border-l2); border-bottom: 0; border-radius: var(--dsw-radius-md) var(--dsw-radius-md) 0 0; background: var(--dsw-alias-bg-module); width: 100%; text-align: left; }
-  .dock .pb { font-weight: 600; display: flex; align-items: center; gap: 6px; flex: none; }
-  .steps { display: flex; gap: 3px; flex: 1; min-width: 60px; }
-  .steps i { height: 4px; flex: 1; border-radius: 2px; background: var(--dsw-alias-border-l3); }
-  .steps i.done { background: var(--dsw-alias-text-secondary); }
-  .steps i.now { background: var(--dsw-alias-brand); }
-  .dock .now-label { flex: none; white-space: nowrap; }
-  .composer { border: 1px solid var(--dsw-alias-border-l2); border-radius: 0 0 var(--dsw-radius-lg) var(--dsw-radius-lg); padding: 12px 14px; background: var(--dsw-alias-bg-layer-1); }
+  .foot > div { max-width: 720px; margin: 0 auto; position: relative; }
+  .moment { position: absolute; left: 0; right: 0; bottom: calc(100% + 8px); display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-radius: 12px; background: var(--dsw-alias-text-primary); color: var(--dsw-alias-bg-base); opacity: 0; transform: translateY(6px); pointer-events: none; transition: opacity 160ms, transform 160ms; }
+  .moment.show { opacity: 1; transform: none; }
+  .moment .skill { font: 700 12px var(--p-display); color: var(--p-gold); white-space: nowrap; }
+  .moment .text { flex: 1; min-width: 0; }
+  .moment .stamp.red { color: #FF8379; }
+  .moment .stamp.green { color: #7BDD9A; }
+  .moment .stamp.purple { color: #C5ADF5; }
+  .moment .stamp.mute { color: rgba(160, 160, 160, 0.9); }
+  .dock { display: flex; align-items: center; gap: 12px; padding: 7px 12px 7px 10px; border: 1px solid var(--dsw-alias-border-l2); border-bottom: 0; border-radius: 14px 14px 0 0; background: var(--dsw-alias-bg-module); width: 100%; text-align: left; }
+  .dock .pb { font: 700 13px var(--p-display); flex: none; }
+  .dock .where { flex: none; white-space: nowrap; }
+  .composer { border: 1px solid var(--dsw-alias-border-l2); border-radius: 0 0 16px 16px; padding: 12px 14px; }
   .composer .ph { color: var(--dsw-alias-text-tertiary); font-size: 14px; padding-bottom: 14px; }
   .tools { display: flex; align-items: center; gap: 8px; }
+  .mode { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px 2px 6px; border-radius: 999px; border: 1px solid var(--p-gold-edge); background: var(--p-gold-wash); font: 600 12px var(--p-display); }
   .send { margin-left: auto; width: 28px; height: 28px; border-radius: 50%; background: var(--dsw-alias-text-primary); color: var(--dsw-alias-bg-base); display: grid; place-items: center; }
 
-  /* Right panel */
+  /* Right: the pstack tab */
   .right { border-left: 1px solid var(--dsw-alias-border-l1); display: flex; flex-direction: column; min-height: 0; min-width: 0; }
-  .tabbar { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-bottom: 1px solid var(--dsw-alias-border-l1); }
-  .tabchip { padding: 3px 10px; border-radius: var(--dsw-radius-sm); background: var(--dsw-alias-bg-overlay); font-weight: 500; }
-  .seg { display: flex; padding: 3px; margin: 12px 16px 0; background: var(--dsw-alias-bg-module); border-radius: var(--dsw-radius-sm); }
-  .seg button { flex: 1; padding: 5px 0; border-radius: 6px; color: var(--dsw-alias-text-secondary); }
-  .seg button[aria-selected="true"] { background: var(--dsw-alias-bg-layer-1); color: var(--dsw-alias-text-primary); font-weight: 500; box-shadow: 0 0 0 1px var(--dsw-alias-border-l2); }
-  .pane { flex: 1; min-height: 0; overflow: auto; padding: 16px; display: none; }
+  .tabbar { display: flex; align-items: center; gap: 14px; padding: 10px 16px; border-bottom: 1px solid var(--dsw-alias-border-l1); }
+  .tabchip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 7px; border-radius: 8px; background: var(--dsw-alias-bg-overlay); font-weight: 600; }
+  .seg { display: flex; margin: 14px 16px 0; border-bottom: 1px solid var(--dsw-alias-border-l2); }
+  .seg button { padding: 6px 2px 9px; margin-right: 22px; color: var(--dsw-alias-text-secondary); border-bottom: 2px solid transparent; margin-bottom: -1px; font: 600 13px var(--p-display); }
+  .seg button[aria-selected="true"] { color: var(--dsw-alias-text-primary); border-bottom-color: var(--p-gold); }
+  .pane { flex: 1; min-height: 0; overflow: auto; padding: 18px 16px 24px; display: none; }
   .pane.on { display: block; }
-  .pane h2 { font-size: 15px; margin: 0; font-weight: 600; }
-  .pane h3 { font-size: 12px; font-weight: 500; color: var(--dsw-alias-text-secondary); margin: 22px 0 8px; display: flex; justify-content: space-between; }
-  .titleline { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
-  .steplist { list-style: none; margin: 14px 0 0; padding: 0; }
-  .steplist li { display: grid; grid-template-columns: 18px 16px minmax(0, 1fr) auto; gap: 6px; align-items: baseline; padding: 7px 8px; border-radius: var(--dsw-radius-sm); }
-  .steplist li.now { background: var(--dsw-alias-brand-soft); }
+  .hero { display: flex; gap: 12px; align-items: flex-start; }
+  .hero h2 { font: 800 24px/1.15 var(--p-display); margin: 0; letter-spacing: -0.02em; }
+  .hero p { margin: 3px 0 0; color: var(--dsw-alias-text-secondary); }
+  .goal { margin: 14px 0 0; padding: 10px 0; border-top: 1px solid var(--dsw-alias-border-l2); border-bottom: 1px solid var(--dsw-alias-border-l2); }
+  .sub { display: flex; justify-content: space-between; align-items: baseline; margin: 24px 0 8px; font: 700 13px var(--p-display); }
+  .sub span { font: 400 12px var(--dsw-font-family); color: var(--dsw-alias-text-secondary); }
+  .steplist { list-style: none; margin: 12px 0 0; padding: 0; }
+  .steplist li { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 7px 0; }
+  .steplist .fry { height: 8px; border-radius: 2px; border: 1.25px solid var(--dsw-alias-border-l3); transform: rotate(-2deg); }
+  .steplist li.done .fry { background: var(--p-gold); border-color: var(--p-gold-edge); }
+  .steplist li.now .fry { border-color: var(--p-gold-edge); background: linear-gradient(90deg, var(--p-gold) 45%, transparent 45%); }
+  .steplist li.now { font-weight: 600; }
   .steplist li.todo { color: var(--dsw-alias-text-secondary); }
-  .steplist .mark { color: var(--dsw-alias-text-tertiary); }
-  .steplist li.now .mark { color: var(--dsw-alias-brand); }
-  .chip { font: 11px/18px var(--ds-font-family-code); padding: 0 6px; border-radius: var(--dsw-radius-xs); border: 1px solid var(--dsw-alias-border-l2); color: var(--dsw-alias-text-secondary); }
-  .chip.read { background: var(--dsw-alias-bg-overlay); border-color: transparent; color: var(--dsw-alias-text-primary); }
-  .prow { display: grid; grid-template-columns: 44px 1fr; align-items: center; padding: 3px 0; }
-  .pdots { display: flex; gap: 6px; }
-  .pdots i { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid var(--dsw-alias-border-l3); }
-  .pdots i.read { background: var(--dsw-alias-text-secondary); border-color: transparent; }
-  .pdots i.flag { background: var(--dsw-alias-state-error); border-color: transparent; }
+  .skillref { font-size: 11px; padding: 0 7px; line-height: 19px; border-radius: 5px; border: 1px dashed var(--dsw-alias-border-l3); color: var(--dsw-alias-text-tertiary); }
+  .skillref.read { border: 1px solid var(--p-gold-edge); background: var(--p-gold-wash); color: var(--dsw-alias-text-primary); }
+  .prow { display: grid; grid-template-columns: 44px 1fr; align-items: center; padding: 4px 0; }
+  .eyes { display: flex; gap: 7px; }
+  .eyes i { width: 10px; height: 8px; border-radius: 50%; border: 1.25px solid var(--dsw-alias-border-l3); }
+  .eyes i.read { background: var(--p-russet); border-color: var(--p-russet); }
+  .eyes i.flag { background: var(--p-ketchup); border-color: var(--p-ketchup); }
+  .note { margin-top: 12px; padding: 10px 12px; border-radius: 4px 12px 12px 4px; border-left: 3px solid var(--p-ketchup); background: var(--p-ketchup-wash); }
+  .note.calm { border-left-color: var(--p-vitelotte); background: var(--p-vitelotte-wash); }
+  .note.gold { border-left-color: var(--p-gold); background: var(--p-gold-wash); }
+  .gates { display: grid; grid-template-columns: auto auto 1fr; gap: 9px 12px; align-items: center; }
   table { width: 100%; border-collapse: collapse; }
-  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--dsw-alias-border-l1); vertical-align: top; }
-  th { font-weight: 500; color: var(--dsw-alias-text-secondary); font-size: 12px; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--dsw-alias-border-l1); vertical-align: top; }
+  th { font-weight: 400; color: var(--dsw-alias-text-secondary); font-size: 12px; }
   td.c, th.c { text-align: center; }
   td.r, th.r { text-align: right; }
-  .matrix th.cand { font-weight: 400; vertical-align: bottom; }
-  .matrix th.cand b { display: block; color: var(--dsw-alias-text-primary); font-weight: 600; }
-  .matrix td.c { font-variant-numeric: tabular-nums; font-size: 14px; }
-  .matrix .pick { background: var(--dsw-alias-brand-soft); }
-  .matrix tr.sum td { font-weight: 600; border-bottom: 0; }
-  .note { margin-top: 12px; padding: 9px 12px; border-radius: var(--dsw-radius-sm); background: var(--dsw-alias-bg-module); color: var(--dsw-alias-text-secondary); }
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
-  .stat { padding: 9px 10px; border-radius: var(--dsw-radius-sm); background: var(--dsw-alias-bg-module); }
-  .stat b { display: block; font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; }
-  svg text { font: 10px var(--dsw-font-family); fill: var(--dsw-alias-text-tertiary); }
-  .finding { border: 1px solid var(--dsw-alias-border-l2); border-radius: var(--dsw-radius-sm); padding: 10px 12px; margin-top: 8px; }
-  .finding pre { margin: 8px 0 0; padding: 8px 10px; border-radius: var(--dsw-radius-xs); background: var(--dsw-alias-bg-module); overflow: auto; font: 11.5px/1.5 var(--ds-font-family-code); }
+  .matrix th.cand b { display: block; font: 700 13px var(--p-display); color: var(--dsw-alias-text-primary); }
+  .matrix td.c { font: 600 15px var(--p-display); font-variant-numeric: tabular-nums; }
+  .matrix .base { background: var(--p-gold-wash); }
+  .matrix tr.sum td { border-bottom: 0; font-size: 18px; font-weight: 800; }
+  .finding { padding: 12px 0; border-top: 1px solid var(--dsw-alias-border-l2); }
+  .finding .top { display: flex; align-items: center; gap: 10px; }
+  .finding .top b { flex: 1; }
+  .finding pre { margin: 8px 0 0; padding: 8px 10px; border-radius: 6px; background: var(--dsw-alias-bg-module); overflow: auto; font: 11.5px/1.55 var(--ds-font-family-code); }
+  .bigstats { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 14px; border-top: 1px solid var(--dsw-alias-border-l2); border-bottom: 1px solid var(--dsw-alias-border-l2); }
+  .bigstats div { padding: 10px 0 10px 12px; border-left: 1px solid var(--dsw-alias-border-l2); }
+  .bigstats div:first-child { border-left: 0; padding-left: 0; }
+  .bigstats b { display: block; font: 800 22px/1.2 var(--p-display); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .bigstats b small { font: 400 12px var(--dsw-font-family); color: var(--dsw-alias-text-tertiary); letter-spacing: 0; }
+  svg.chart text { font: 10px var(--dsw-font-family); fill: var(--dsw-alias-text-tertiary); }
+  .flash { animation: flash 900ms ease-out; }
+  @keyframes flash { from { box-shadow: 0 0 0 3px var(--p-gold); } to { box-shadow: 0 0 0 3px transparent; } }
 
-  /* Narrow windows: drop the session list, then stack the panel under the chat. */
-  @media (max-width: 1180px) { .app { grid-template-columns: minmax(0, 1fr) 440px; } .left { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .stamp.land, .flash { animation: none; } .moment { transition: none; } }
+  @media (max-width: 1180px) { .app { grid-template-columns: minmax(0, 1fr) 448px; } .left { display: none; } }
   @media (max-width: 900px) {
     .app { grid-template-columns: minmax(0, 1fr); height: auto; }
-    .center { height: 100vh; }
+    .center { height: calc(100vh - 46px); }
     .right { border-left: 0; border-top: 1px solid var(--dsw-alias-border-l2); }
     .pane { overflow: visible; }
   }
 
-  /* Slot annotations, shown on demand */
   [data-slot] { position: relative; }
   body[data-annot] [data-slot] { outline: 1.5px dashed var(--annot); outline-offset: 2px; }
-  body[data-annot] [data-slot]::after {
-    content: attr(data-slot); position: absolute; left: 0; top: -9px; z-index: 5; padding: 0 6px; border-radius: 3px;
-    font: 10px/16px var(--ds-font-family-code); background: var(--annot); color: #fff; white-space: nowrap; pointer-events: none;
-  }
+  body[data-annot] [data-slot]::after { content: attr(data-slot); position: absolute; left: 0; top: -9px; z-index: 5; padding: 0 6px; border-radius: 3px; font: 10px/16px var(--ds-font-family-code); background: var(--annot); color: #fff; white-space: nowrap; pointer-events: none; }
   body[data-annot] [data-slot-align="end"]::after { left: auto; right: 0; }
 </style>
 </head>
-<body>
-<div class="app">
+<body data-mode="on" data-waiting>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="potato" viewBox="0 0 32 34">
+    <path d="M7.5 14.5 6.6 5.2 9.8 8l2.7-4.8L15.2 8l3.2-2.8-.9 9.3z" transform="rotate(-9 12.5 12)" fill="var(--crown, none)" stroke="var(--crown-ink, none)" stroke-width="1.2" stroke-linejoin="round"/>
+    <path d="M5 17.4c1-3.6 4.2-6.3 7.6-6.2 2.2.1 3.4 1.7 5.6 1.8 1.8.1 3-.8 5-.5 3.9.6 6.4 4.5 6 8.9-.5 5.4-5.6 9-11.4 9.4-5.4.4-10.9-1.7-12.7-6.2-1-2.4-.8-4.9-.1-7.2z" fill="var(--skin)" stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round"/>
+    <g fill="none" stroke="var(--ink)" stroke-width="1.3" stroke-linecap="round">
+      <path d="M8.6 20.8q1.2-1.1 2.5-.2"/>
+      <path d="M16.3 16.2q1.1 1.1 2.4.3"/>
+      <path d="M13.3 25.9q1.3-.9 2.6.1"/>
+    </g>
+    <circle cx="23.4" cy="18.8" r=".8" fill="var(--ink)"/>
+    <path d="M22.2 23.6c1.6-2.2 5.2-2 6.6.4 1.5 2.6-.2 6-3.2 6.2-3 .2-5.2-3.6-3.4-6.6z" fill="var(--dab, none)"/>
+  </symbol>
+</svg>
+
+<header class="replay">
+  <span class="name">🥔 dsh-pstack 界面规划稿</span>
+  <div class="events" id="events" aria-label="回放一个事件"></div>
+  <button class="toggle" id="annot" aria-pressed="false">槽位标注</button>
+  <button class="toggle" id="theme" aria-pressed="false">深色</button>
+</header>
+
+<div class="app">
   <aside class="left">
     <div class="brand">DeepSeek Harness</div>
-    <button class="new">+ 新会话</button>
+    <button class="new">新会话</button>
     <div class="group">pstack-plugin</div>
-    <div class="row on"><span class="t">修滚动漂移</span><span class="badge" data-slot="sidebar.session.row.trailing" data-slot-align="end"><span class="dot run"></span>Bug fix 3/6</span></div>
-    <div class="row"><span class="t">搜索慢查询</span><span class="badge"><span class="dot wait"></span>等你决定 2</span></div>
-    <div class="row"><span class="t">迁移到异步 store</span><span class="badge"><span class="dot run"></span>Autopilot</span></div>
-    <div class="row"><span class="t">升级依赖</span><span class="badge"><span class="dot done"></span>已完成</span></div>
+    <div class="row on"><span class="t">修滚动漂移</span><span class="trail" data-slot="sidebar.session.row.trailing" data-slot-align="end"><svg class="potato sm live"><use href="#potato"/></svg><span id="rowstep" class="num">3/6</span></span></div>
+    <div class="row"><span class="t">搜索慢查询</span><span class="trail"><span class="ketchup-count">2</span>等你</span></div>
+    <div class="row"><span class="t">迁移到异步 store</span><span class="trail"><span class="lamp gold"></span>夜间运行</span></div>
+    <div class="row"><span class="t">升级依赖</span><span class="trail"><span class="lamp green"></span>已落地</span></div>
     <div class="row"><span class="t">随便聊聊</span></div>
   </aside>
 
   <main class="center">
-    <div class="head">
-      <h1>修滚动漂移</h1>
-      <button class="ghost" id="annot" aria-pressed="false">显示槽位标注</button>
-      <button class="ghost" id="theme" aria-pressed="false">深色</button>
-    </div>
-
+    <div class="head"><h1>修滚动漂移</h1></div>
     <div class="scroll"><div class="col">
       <div class="user"><span class="slash">/poteto-mode</span> 这个 PR 有个隐蔽的 bug：空闲时滚动位置每 750ms 漂一下。先复现，再修，再验证。</div>
 
-      <div class="say">目标是让列表在空闲时保持不动，最小的改动是修掉触发漂移的那个计时器。已按 Bug fix 复现并定位：<code>useAutoScroll</code> 的重排计时器在没有新消息时仍然执行。下面先让三个模型各自给出修法。</div>
+      <div class="say">目标是让列表在空闲时保持不动，最小的改动是修掉触发漂移的那个计时器。已复现并定位：<code>useAutoScroll</code> 的重排计时器在没有新消息时仍然执行。先让三个模型各给一个修法。</div>
 
-      <div class="tool" data-slot="tool.call.toolview · pstack_arena">
-        <div class="bar"><span class="name">Arena</span><span class="muted">修复 useAutoScroll 的空闲重排</span><span class="pill ok" style="margin-left:auto">2 完成 · 1 无输出</span></div>
-        <div class="body">
-          <div class="seats">
-            <div class="seat"><b>claude-opus-5-5</b><span class="muted">anthropic · high</span><br><span class="pill ok">完成 4m12s</span></div>
-            <div class="seat"><b>deepseek-v4</b><span class="muted">deepseek · xhigh</span><br><span class="pill ok">完成 2m50s</span></div>
-            <div class="seat"><b>gemini-4-neon</b><span class="muted">google · xhigh</span><br><span class="pill bad">无输出</span></div>
-          </div>
-          <div class="acts"><button class="btn" data-open="panel">打开面板</button></div>
+      <section class="pcard" id="arena-card" data-slot="tool.call.toolview · pstack_arena">
+        <header><h2>Arena</h2><span class="muted">修复 useAutoScroll 的空闲重排</span></header>
+        <div class="phases"><span class="done">定题</span><span class="done">扇出</span><span class="done">交叉评审</span><span class="now">选底</span><span>嫁接</span><span>验证</span></div>
+        <div class="seats">
+          <div class="seat"><b>claude-opus-5-5</b><span class="vendor"><span class="lamp purple"></span>anthropic，high</span><br><span class="stamp green">交卷 4m12s</span></div>
+          <div class="seat"><b>deepseek-v4</b><span class="vendor"><span class="lamp gold"></span>deepseek，xhigh</span><br><span class="stamp green">交卷 2m50s</span></div>
+          <div class="seat" id="seat-c"><b>gemini-4-neon</b><span class="vendor"><span class="lamp"></span>google，xhigh</span><br><span class="stamp mute">无输出</span></div>
         </div>
+        <div class="acts"><button class="btn" data-open="panel">看评分</button></div>
+      </section>
+
+      <div class="tool" id="guard-row">
+        <div class="bar"><b>bash</b><code>git add -A &amp;&amp; git commit -m "fix: stop idle reflow"</code><span class="stamp red">拦下</span></div>
+        <div class="why">🥔 pstack blocked <code>git add -A</code>. This stages every change in the tree, including files this task did not touch. Stage the files you changed by path: <code>git add &lt;file&gt; &lt;file&gt;</code></div>
       </div>
 
-      <div class="tool err">
-        <div class="bar"><span class="name">bash</span><code>git add -A &amp;&amp; git commit -m "fix: stop idle reflow"</code><span class="pill bad" style="margin-left:auto">已拦截</span></div>
-        <div class="body">pstack blocked <code>git add -A</code>. This stages every change in the tree, including files this task did not touch. Stage the files you changed by path: <code>git add &lt;file&gt; &lt;file&gt;</code></div>
-      </div>
+      <div class="say">已改为按路径暂存，只提交了 <code>useAutoScroll.ts</code> 和它的测试。原复现脚本现在通过。提交前先过一遍注释。</div>
 
-      <div class="say">已改为按路径暂存，只提交了 <code>useAutoScroll.ts</code> 和它的测试。原复现脚本现在通过。</div>
+      <section class="pcard peel" id="sicko-card" data-slot="tool.call.toolview · pstack_no_comments">
+        <header><h2>Comment Sicko</h2><span class="stamp red said" title="代理上报">MUST KILL 2</span></header>
+        <div class="sicko">“Yes... Ha ha ha... Yes!”</div>
+        <div class="tally">
+          <div><b>14</b><span class="muted">条注释删掉</span></div>
+          <div><b>2</b><span class="muted">处要改代码</span></div>
+          <div><b>1</b><span class="muted">条留待你看</span></div>
+        </div>
+      </section>
 
-      <div class="ketchup" data-slot="tool.call.toolview · pstack_ketchup">
-        <header>2 件事等你决定 <span class="pill">/ketchup</span></header>
+      <section class="pcard ketchup" id="ketchup-card" data-slot="tool.call.toolview · pstack_ketchup">
+        <header><h2>2 件事等你决定</h2></header>
         <div class="call">
-          <div class="q"><strong>合并这个修复？</strong><span class="muted">我的建议：合并</span></div>
-          <ul>
-            <li>空闲时列表不再每 750ms 抖一下。<br><span class="muted">证据：原复现脚本从失败变为通过，失败的测试先于修复提交。风险低：只改一个计时器的启动条件。</span></li>
-          </ul>
+          <h3>合并这个修复？</h3>
+          <div class="pick">我的建议是合并。</div>
+          <dl class="facts">
+            <dt>变化</dt><dd>空闲时列表不再每 750ms 抖一下。</dd>
+            <dt>证据</dt><dd>原复现脚本从失败变为通过，失败的测试排在修复前面。</dd>
+            <dt>风险</dt><dd>低。只改了一个计时器的启动条件。</dd>
+          </dl>
           <div class="acts"><button class="btn">先看 diff</button><button class="btn primary">合并</button></div>
         </div>
         <div class="call">
-          <div class="q"><strong>强推 fix/idle-scroll 到远端？</strong><span class="muted">我的建议：不需要</span></div>
-          <ul>
-            <li>重排提交顺序后本地与远端分叉了。<br><span class="muted">强推会覆盖远端上 1 个不在本地的提交。也可以新开一个分支推上去，什么都不覆盖。</span></li>
-          </ul>
+          <h3>强推 fix/idle-scroll 到远端？</h3>
+          <div class="pick">我的建议是不推，改推到新分支。</div>
+          <dl class="facts">
+            <dt>代价</dt><dd>强推会覆盖远端上 1 个不在本地的提交。推到新分支什么都不覆盖。</dd>
+          </dl>
           <div class="acts"><button class="btn">仍然强推</button><button class="btn primary">推到新分支</button></div>
         </div>
-      </div>
+      </section>
     </div></div>
 
     <div class="foot"><div>
-      <button class="dock" data-slot="conversation.input.dock" data-open="playbook" title="You own this task. Plan, review, verify.">
-        <span class="pb"><span class="dot run"></span>Bug fix</span>
-        <span class="steps" aria-label="6 步中的第 3 步"><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i><i></i></span>
-        <span class="now-label muted num">3/6 规划修复</span>
-        <span class="pill warn">TDD 红灯已见</span>
-        <span class="pill">护栏拦截 1</span>
+      <div class="moment" id="moment" role="status"><span class="skill"></span><span class="text"></span><span class="stamp"></span></div>
+      <button class="dock" id="dock" data-slot="conversation.input.dock" data-open="playbook" title="You own this task. Plan, review, verify.">
+        <svg class="potato live"><use href="#potato"/></svg>
+        <span class="pb">Bug fix</span>
+        <span class="fries" id="fries"></span>
+        <span class="where muted num" id="where"></span>
+        <span class="tag" id="tdd"></span>
+        <span class="tag" id="blocks"></span>
       </button>
       <div class="composer">
-        <div class="ph">继续说点什么…</div>
+        <div class="ph">继续说点什么</div>
         <div class="tools">
-          <span class="pill brand" data-slot="conversation.input.left">poteto-mode 常驻</span>
-          <span class="pill">deepseek-v4 · xhigh</span>
+          <span class="mode" data-slot="conversation.input.left"><svg class="potato sm"><use href="#potato"/></svg>poteto-mode</span>
+          <span class="tag">deepseek-v4，xhigh</span>
           <span class="send">↑</span>
         </div>
       </div>
@@ -276,7 +377,7 @@
   </main>
 
   <aside class="right" data-slot="sidebar.right.pane.tab · pstack">
-    <div class="tabbar"><span class="tabchip">pstack</span><span class="faint">文件</span><span class="faint">预览</span></div>
+    <div class="tabbar"><span class="tabchip"><svg class="potato sm"><use href="#potato"/></svg>pstack</span><span class="faint">文件</span><span class="faint">预览</span></div>
     <div class="seg" role="tablist">
       <button role="tab" data-view="playbook" aria-selected="true">Playbook</button>
       <button role="tab" data-view="panel" aria-selected="false">面板</button>
@@ -285,157 +386,247 @@
     </div>
 
     <section class="pane on" id="playbook">
-      <div class="titleline"><h2>Bug fix</h2><span class="muted num">步骤 3 / 6</span></div>
-      <div class="muted">You own this task. Plan, review, verify.</div>
-      <ol class="steplist">
-        <li class="done"><span class="mark">✓</span><span class="faint num">1</span><span>在对应界面上自己复现</span><span></span></li>
-        <li class="done"><span class="mark">✓</span><span class="faint num">2</span><span>二分定位原因</span><span class="chip read">why</span></li>
-        <li class="now"><span class="mark">▶</span><span class="faint num">3</span><span>规划修复，跨函数边界先 architect</span><span class="chip read">architect</span></li>
-        <li class="todo"><span class="mark"></span><span class="faint num">4</span><span>在同一界面上验证</span><span></span></li>
-        <li class="todo"><span class="mark"></span><span class="faint num">5</span><span>失败的复现先于修复提交</span><span class="chip">tdd</span></li>
-        <li class="todo"><span class="mark"></span><span class="faint num">6</span><span>Opening a PR</span><span></span></li>
-      </ol>
+      <div class="hero"><svg class="potato lg live"><use href="#potato"/></svg><div><h2>Bug fix</h2><p>You own this task. Plan, review, verify.</p></div></div>
+      <p class="goal"><span class="faint">目标</span>　列表在空闲时保持不动。最小改动是修掉触发漂移的计时器。</p>
+      <ol class="steplist" id="steplist"></ol>
 
-      <h3><span>原则</span><span class="num">本会话读过 5 / 24</span></h3>
-      <div class="prow"><span class="muted">核心</span><span class="pdots"><i class="read" title="Laziness Protocol"></i><i class="read" title="Foundational Thinking"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
-      <div class="prow"><span class="muted">架构</span><span class="pdots"><i></i><i class="read" title="Boundary Discipline"></i><i></i><i></i><i></i><i></i></span></div>
-      <div class="prow"><span class="muted">验证</span><span class="pdots"><i class="read" title="Prove It Works"></i><i class="read" title="Fix Root Causes"></i><i class="flag" title="Explain the Number：回复里引用了，但没读过"></i><i></i><i></i></span></div>
-      <div class="prow"><span class="muted">委派</span><span class="pdots"><i></i><i></i></span></div>
-      <div class="prow"><span class="muted">元</span><span class="pdots"><i></i></span></div>
-      <div class="note">上一条回复引用了 Explain the Number，但本会话没有读过它的技能文件。结束本轮前已要求代理先读，或删掉这处引用。</div>
+      <div class="sub">原则<span id="readcount"></span></div>
+      <div class="prow"><span class="muted">核心</span><span class="eyes"><i class="read" title="Laziness Protocol"></i><i class="read" title="Foundational Thinking"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="prow"><span class="muted">架构</span><span class="eyes"><i></i><i class="read" title="Boundary Discipline"></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="prow"><span class="muted">验证</span><span class="eyes"><i class="read" title="Prove It Works"></i><i class="read" title="Fix Root Causes"></i><i id="flag-eye" title="Explain the Number"></i><i></i><i></i></span></div>
+      <div class="prow"><span class="muted">委派</span><span class="eyes"><i></i><i></i></span></div>
+      <div class="prow"><span class="muted">元</span><span class="eyes"><i></i></span></div>
+      <div class="note" id="flag-note" hidden>上一条回复引用了 Explain the Number，但这个会话没读过它的技能文件。已要求代理先读，或者删掉这处引用。</div>
+      <div class="note gold" id="premise-note" hidden><b>两个修法败在同一关。</b>先把它们共同的前提写下来并检验，再写第三个。<br><span class="muted">前提：漂移来自重排计时器。</span></div>
 
-      <h3><span>门禁</span></h3>
-      <table>
-        <tr><td>TDD</td><td><span class="pill warn">红灯已见</span></td><td class="muted"><code>pnpm test useAutoScroll</code> 退出码 1，生产代码已放开</td></tr>
-        <tr><td>命令护栏</td><td><span class="pill">拦截 1</span></td><td class="muted"><code>git add -A</code></td></tr>
-        <tr><td>强推</td><td><span class="pill">需确认</span></td><td class="muted">受保护分支：main、release</td></tr>
-      </table>
+      <div class="sub">门禁</div>
+      <div class="gates">
+        <span>TDD</span><span class="stamp" id="tdd-stamp"></span><span class="muted" id="tdd-why"></span>
+        <span>命令</span><span class="stamp red" id="block-stamp"></span><span class="muted"><code>git add -A</code></span>
+        <span>强推</span><span class="stamp mute">要问你</span><span class="muted">受保护分支是 main 和 release</span>
+      </div>
+      <p class="faint" style="margin:18px 0 0">实线章是运行时判的，虚线章是代理自己报的。</p>
     </section>
 
     <section class="pane" id="panel">
-      <div class="titleline"><h2>Arena</h2><span class="muted">修复 useAutoScroll 的空闲重排</span></div>
-      <table class="matrix" style="margin-top:12px">
-        <tr>
-          <th></th>
-          <th class="cand c"><b>候选 A</b>anthropic<br><span class="mono">claude-opus-5-5</span></th>
-          <th class="cand c pick"><b>候选 B</b>deepseek<br><span class="mono">deepseek-v4</span></th>
-          <th class="cand c"><b>候选 C</b>google<br><span class="mono">gemini-4-neon</span></th>
-        </tr>
-        <tr><td class="muted">状态</td><td class="c"><span class="pill ok">4m12s</span></td><td class="c pick"><span class="pill ok">2m50s</span></td><td class="c"><span class="pill bad">无输出</span></td></tr>
-        <tr><td>只改启动条件，不动调度</td><td class="c">3</td><td class="c pick">5</td><td class="c faint">–</td></tr>
-        <tr><td>有会失败的回归测试</td><td class="c">5</td><td class="c pick">4</td><td class="c faint">–</td></tr>
-        <tr><td>新消息到达时仍贴底</td><td class="c">5</td><td class="c pick">5</td><td class="c faint">–</td></tr>
-        <tr><td>改动行数</td><td class="c">3</td><td class="c pick">4</td><td class="c faint">–</td></tr>
-        <tr class="sum"><td>合计</td><td class="c">16</td><td class="c pick">18</td><td class="c faint">–</td></tr>
+      <div class="hero"><div><h2>Arena</h2><p>修复 useAutoScroll 的空闲重排</p></div></div>
+      <table class="matrix" style="margin-top:14px">
+        <tr><th></th><th class="cand c"><b>A</b>claude-opus-5-5</th><th class="cand c base"><b>B</b>deepseek-v4</th><th class="cand c"><b>C</b>gemini-4-neon</th></tr>
+        <tr><td>只改启动条件，不动调度</td><td class="c">3</td><td class="c base">5</td><td class="c faint">–</td></tr>
+        <tr><td>有会失败的回归测试</td><td class="c">5</td><td class="c base">4</td><td class="c faint">–</td></tr>
+        <tr><td>新消息到达时仍贴底</td><td class="c">5</td><td class="c base">5</td><td class="c faint">–</td></tr>
+        <tr><td>改动行数少</td><td class="c">3</td><td class="c base">4</td><td class="c faint">–</td></tr>
+        <tr class="sum"><td class="muted" style="font:400 13px var(--dsw-font-family)">合计</td><td class="c">16</td><td class="c base">18</td><td class="c faint">–</td></tr>
       </table>
-      <div class="note"><b>裁判</b> anthropic / claude-opus-5-5。厂商校验已执行：主代理是 deepseek，裁判来自另一家。裁判推荐以 B 为底，把 A 的回归测试嫁接过来。</div>
+      <div class="note calm" id="judge-note"><span class="stamp purple">跨厂商</span>　裁判是 anthropic 的 claude-opus-5-5，主代理是 deepseek。它推荐以 B 为底，把 A 的回归测试嫁接过来。</div>
+      <div class="note gold" id="converge-note" hidden><b>三个候选收敛到了同一个形状。</b>这是强一致，直接采用，不需要嫁接。</div>
       <div class="acts"><button class="btn">看 A 的 diff</button><button class="btn">看 B 的 diff</button><button class="btn primary">以 B 为底</button></div>
 
-      <h3><span>Interrogate</span><span>2 条经复跑成立 · 3 条已丢弃</span></h3>
-      <div class="finding">
-        <div class="titleline"><b>用户上滑阅读时仍被拉回底部</b><span class="pill">A · C 都发现</span></div>
-        <pre>$ pnpm vitest run useAutoScroll -t "keeps position while reading"
-  expected scrollTop 120, received 980</pre>
-      </div>
-      <div class="finding">
-        <div class="titleline"><b>卸载后计时器没有清除</b><span class="pill">B 发现</span></div>
-        <pre>$ node scripts/repro-unmount.mjs
-  1 timer still active after unmount</pre>
-      </div>
-      <div class="note">已丢弃：A 2 条（命令实际通过）、B 1 条（只是命名意见，没有运行证据）。队列中还有 1 个评审员在等空位，当前并发 8 / 8。</div>
+      <div class="sub">Interrogate<span id="finding-count"></span></div>
+      <div id="findings"></div>
+      <p class="muted" id="queue-line">还有 1 个评审员在排队，子代理已到并发上限 8 个。</p>
     </section>
 
     <section class="pane" id="bench">
-      <div class="titleline"><h2>首屏渲染 p50</h2><span class="pill">基准已冻结 a3f9c1</span></div>
-      <div class="muted">越低越好 · 每次取 5 个样本的中位数 · <span class="mono">node bench/first-paint.mjs</span></div>
-      <svg id="chart" viewBox="0 0 408 190" width="100%" role="img" aria-label="六次尝试的中位数：142 降到 89 毫秒" style="margin-top:10px"></svg>
-      <div class="stats">
-        <div class="stat"><span class="muted">当前 / 目标</span><b>−37% <span class="faint" style="font-weight:400">/ −50%</span></b></div>
-        <div class="stat"><span class="muted">尝试 / 至少</span><b>6 <span class="faint" style="font-weight:400">/ 10</span></b></div>
-        <div class="stat"><span class="muted">保留 · 回滚</span><b>3 · 3</b></div>
+      <div class="hero"><div><h2>首屏渲染 p50</h2><p>越低越好，每次取 5 个样本的中位数</p></div><span class="stamp mute" id="frozen" style="margin-left:auto">基准已冻结</span></div>
+      <svg class="chart" id="chart" viewBox="0 0 416 196" width="100%" role="img" style="margin-top:12px"></svg>
+      <div class="bigstats">
+        <div><span class="muted">比基线</span><b id="s-gain"></b></div>
+        <div><span class="muted">尝试</span><b id="s-tries"></b></div>
+        <div><span class="muted">保留与回滚</span><b id="s-kept"></b></div>
       </div>
-      <table style="margin-top:14px" id="attempts">
-        <tr><th>#</th><th>假设</th><th class="r">前</th><th class="r">后</th><th>判定</th></tr>
-      </table>
+      <div class="note gold" id="plateau-note" hidden><b>连续三次回滚，到平台期了。</b>换一类假设、组合差一点的方案，或者回去重读源码。</div>
+      <div class="note calm" id="met-note" hidden><span class="stamp gold">达标</span>　目标和最少尝试次数都满足了，可以停。</div>
+      <table style="margin-top:14px" id="attempts"></table>
     </section>
 
     <section class="pane" id="ledger">
-      <div class="titleline"><h2>决策记录</h2><button class="btn">导出 TSV</button></div>
-      <table style="margin-top:12px">
-        <tr><th>阶段</th><th>决定</th><th>证据</th><th>结果</th></tr>
-        <tr><td class="muted">复现</td><td>写了个脚本让空闲状态挂 3 秒并记录 scrollTop<div class="muted">不依赖人去盯着看</div></td><td><span class="chip read">scripts/repro-idle.mjs</span></td><td>4 次漂移</td></tr>
-        <tr><td class="muted">定位</td><td>排除了虚拟列表的测量回调<div class="muted">关掉它之后仍然漂</div></td><td><span class="chip read">commit 7c21e0a</span></td><td>已排除</td></tr>
-        <tr><td class="muted">修复</td><td>丢弃了候选 C 的产出<div class="muted">子代理没有交回任何文件</div></td><td><span class="chip">无</span></td><td>已回滚</td></tr>
-        <tr><td class="muted">验证</td><td>原复现脚本通过后才提交修复<div class="muted">失败的测试排在修复前面</div></td><td><span class="chip read">commit a91f03d</span></td><td>测试通过</td></tr>
-      </table>
-      <h3><span>Attention</span><span>reviewed by anthropic / claude-opus-5-5</span></h3>
-      <div class="note">第 3 行没有证据指针。丢弃一个候选是会影响结果的决定，应当指向那个子会话。</div>
+      <div class="hero"><div><h2>决策记录</h2><p>只能追加。写错了就补一行盖过去。</p></div><button class="btn" style="margin-left:auto">导出 TSV</button></div>
+      <table style="margin-top:14px" id="rows"></table>
+      <div class="sub">Attention<span>由 anthropic 的 claude-opus-5-5 复核</span></div>
+      <div class="note">第 3 行没有证据。丢掉一个候选会影响结果，应该指向那个子会话。</div>
     </section>
   </aside>
 </div>
 
 <script>
   const $ = (selector) => document.querySelector(selector)
+  const STEPS = [
+    ['在对应界面上自己复现', null],
+    ['二分定位原因', 'why'],
+    ['规划修复，跨函数边界先 architect', 'architect'],
+    ['在同一界面上验证', null],
+    ['失败的复现先于修复提交', 'tdd'],
+    ['Opening a PR', null],
+  ]
+  const TDD = {
+    off: { tag: 'TDD 未开', lamp: '', stamp: ['未开', 'mute'], why: '用 /tdd on 打开' },
+    pending: { tag: '等红灯', lamp: 'red', stamp: ['等红灯', 'red'], why: '生产代码锁着，只能写测试' },
+    red: { tag: '红灯已见', lamp: 'red', stamp: ['红灯已见', 'red'], why: 'pnpm test useAutoScroll 退出码 1，生产代码已放开' },
+    green: { tag: '已转绿', lamp: 'green', stamp: ['已转绿', 'green'], why: '同一条测试命令退出码 0' },
+  }
+  const state = { step: 3, tdd: 'red', blocks: 1, read: new Set(['why', 'architect']), principles: 5 }
+  const BASELINE = 142, TARGET = 71, MIN_TRIES = 10
+  const attempts = [
+    { h: '记忆化列表项', before: 142, after: 141, noise: 4, kept: false, why: '在噪声内' },
+    { h: '延迟加载图标', before: 142, after: 121, noise: 4, kept: true },
+    { h: '跳过首帧布局测量', before: 121, after: 118, noise: 3, kept: false, why: '门禁变红' },
+    { h: '虚拟列表减少 overscan', before: 121, after: 104, noise: 3, kept: true },
+    { h: '缓存布局测量', before: 104, after: 103, noise: 3, kept: false, why: '在噪声内' },
+    { h: '把埋点移出启动路径', before: 104, after: 89, noise: 2, kept: true },
+  ]
+  const findings = [
+    { title: '用户上滑阅读时仍被拉回底部', by: 'A 和 C 都发现', proven: true, run: '$ pnpm vitest run useAutoScroll -t "keeps position while reading"\n  expected scrollTop 120, received 980' },
+    { title: '卸载后计时器没有清除', by: 'B 发现', proven: true, run: '$ node scripts/repro-unmount.mjs\n  1 timer still active after unmount' },
+  ]
+  let dropped = 3
+  const ledger = [
+    ['复现', '写了个脚本让空闲状态挂 3 秒并记录 scrollTop', '不想靠人盯着看', 'scripts/repro-idle.mjs', '4 次漂移'],
+    ['定位', '排除了虚拟列表的测量回调', '关掉它之后仍然漂', 'commit 7c21e0a', '已排除'],
+    ['修复', '丢弃了候选 C 的产出', '子代理没有交回任何文件', '', '已回滚'],
+    ['验证', '原复现脚本通过后才提交修复', '失败的测试排在修复前面', 'commit a91f03d', '测试通过'],
+  ]
+
+  const stamp = (text, tone, land) => `<span class="stamp ${tone}${land ? ' land' : ''}">${text}</span>`
+  const best = () => attempts.reduce((value, attempt) => (attempt.kept ? attempt.after : value), BASELINE)
+
+  function renderDock() {
+    const done = state.step > STEPS.length
+    document.body.toggleAttribute('data-golden', done)
+    $('#fries').innerHTML = STEPS.map((_, i) => `<i class="${i + 1 < state.step ? 'done' : i + 1 === state.step ? 'now' : ''}"></i>`).join('')
+    $('#where').textContent = done ? '全部做完' : `${state.step}/${STEPS.length} ${STEPS[state.step - 1][0].split('，')[0]}`
+    $('#rowstep').textContent = done ? '做完了' : `${state.step}/${STEPS.length}`
+    const tdd = TDD[state.tdd]
+    $('#tdd').innerHTML = `<span class="lamp ${tdd.lamp}"></span>${tdd.tag}`
+    $('#blocks').textContent = `拦下 ${state.blocks} 次`
+    $('#steplist').innerHTML = STEPS.map(([text, skill], i) => {
+      const status = i + 1 < state.step ? 'done' : i + 1 === state.step ? 'now' : 'todo'
+      const ref = skill === null ? '<span></span>' : `<span class="skillref${state.read.has(skill) ? ' read' : ''}">${skill}</span>`
+      return `<li class="${status}"><span class="fry"></span><span>${text}</span>${ref}</li>`
+    }).join('')
+    $('#readcount').textContent = `这个会话读过 ${state.principles} 条，共 24 条`
+    $('#tdd-stamp').className = `stamp ${tdd.stamp[1]}`
+    $('#tdd-stamp').textContent = tdd.stamp[0]
+    $('#tdd-why').textContent = tdd.why
+    $('#block-stamp').textContent = `拦下 ${state.blocks}`
+  }
+
+  function renderFindings() {
+    $('#finding-count').textContent = `${findings.length} 条复跑成立，${dropped} 条丢弃`
+    $('#findings').innerHTML = findings.map((finding) =>
+      `<div class="finding"><div class="top"><b>${finding.title}</b><span class="faint">${finding.by}</span>${stamp('成立', 'red')}</div><pre>${finding.run}</pre></div>`).join('')
+      + `<div class="finding"><div class="top"><b class="muted" style="font-weight:400">A 丢 2 条，命令实际通过。B 丢 ${dropped - 2} 条，没有运行证据。</b>${stamp('丢弃 ' + dropped, 'mute')}</div></div>`
+  }
+
+  function renderBench() {
+    const W = 416, H = 196, L = 34, R = 12, T = 14, B = 24, LO = 40, HI = 160
+    const x = (i) => L + (i * (W - L - R)) / Math.max(attempts.length, 6)
+    const y = (value) => T + ((HI - value) * (H - T - B)) / (HI - LO)
+    const ink = 'var(--dsw-alias-text-secondary)'
+    let svg = ''
+    for (const tick of [60, 80, 100, 120, 140, 160]) svg += `<line x1="${L}" x2="${W - R}" y1="${y(tick)}" y2="${y(tick)}" stroke="var(--dsw-alias-border-l1)"/><text x="${L - 6}" y="${y(tick) + 3}" text-anchor="end">${tick}</text>`
+    svg += `<line x1="${L}" x2="${W - R}" y1="${y(BASELINE)}" y2="${y(BASELINE)}" stroke="var(--dsw-alias-border-l3)" stroke-dasharray="2 3"/><text x="${W - R}" y="${y(BASELINE) - 5}" text-anchor="end">基线 ${BASELINE}</text>`
+    svg += `<rect x="${L}" y="${y(TARGET)}" width="${W - L - R}" height="${y(LO) - y(TARGET)}" fill="var(--p-gold-wash)"/><text x="${W - R}" y="${y(TARGET) + 12}" text-anchor="end">目标 ${TARGET} 以下</text>`
+    let level = BASELINE, path = `M ${x(0)} ${y(BASELINE)}`
+    attempts.forEach((attempt, i) => { if (attempt.kept) level = attempt.after; path += ` H ${x(i + 1)} V ${y(level)}` })
+    svg += `<path d="${path}" fill="none" stroke="var(--p-gold-edge)" stroke-width="2"/>`
+    attempts.forEach((attempt, i) => {
+      const cx = x(i + 1), cy = y(attempt.after)
+      svg += `<line x1="${cx}" x2="${cx}" y1="${y(attempt.after + attempt.noise)}" y2="${y(attempt.after - attempt.noise)}" stroke="${ink}"/>`
+      svg += attempt.kept
+        ? `<circle cx="${cx}" cy="${cy}" r="4.5" fill="var(--p-gold)" stroke="var(--p-gold-edge)" stroke-width="1.5"/>`
+        : `<circle cx="${cx}" cy="${cy}" r="4" fill="var(--dsw-alias-bg-base)" stroke="${ink}" stroke-width="1.5"/>`
+      svg += `<text x="${cx}" y="${H - 8}" text-anchor="middle">${i + 1}</text>`
+    })
+    $('#chart').innerHTML = svg
+    $('#chart').setAttribute('aria-label', `${attempts.length} 次尝试，中位数从 ${BASELINE} 降到 ${best()} 毫秒`)
+    const gain = Math.round(((BASELINE - best()) / BASELINE) * 100)
+    const kept = attempts.filter((attempt) => attempt.kept).length
+    $('#s-gain').innerHTML = `−${gain}% <small>目标 −50%</small>`
+    $('#s-tries').innerHTML = `${attempts.length} <small>至少 ${MIN_TRIES}</small>`
+    $('#s-kept').innerHTML = `${kept} <small>保留</small> ${attempts.length - kept} <small>回滚</small>`
+    const last3 = attempts.slice(-3)
+    $('#plateau-note').hidden = !(last3.length === 3 && last3.every((attempt) => !attempt.kept))
+    $('#met-note').hidden = !(best() <= TARGET && attempts.length >= MIN_TRIES)
+    $('#attempts').innerHTML = '<tr><th>#</th><th>假设</th><th class="r">前</th><th class="r">后</th><th></th></tr>' + attempts.map((attempt, i) => {
+      const change = Math.round(((attempt.after - attempt.before) / attempt.before) * 100)
+      const verdict = attempt.kept ? stamp(`保留 ${String(change).replace('-', '−')}%`, 'gold') : stamp('回滚', 'mute') + ` <span class="muted">${attempt.why}</span>`
+      return `<tr><td class="num faint">${i + 1}</td><td>${attempt.h}</td><td class="r num">${attempt.before}</td><td class="r num">${attempt.after}</td><td>${verdict}</td></tr>`
+    }).reverse().join('')
+  }
+
+  function renderLedger() {
+    $('#rows').innerHTML = '<tr><th>阶段</th><th>决定</th><th>证据</th><th>结果</th></tr>' + ledger.map(([phase, decision, why, evidence, result]) =>
+      `<tr><td class="muted">${phase}</td><td>${decision}<div class="muted">${why}</div></td><td>${evidence === '' ? stamp('缺', 'red') : `<code>${evidence}</code>`}</td><td>${result}</td></tr>`).join('')
+  }
+
   const show = (view) => {
     document.querySelectorAll('.seg button').forEach((button) => button.setAttribute('aria-selected', String(button.dataset.view === view)))
     document.querySelectorAll('.pane').forEach((pane) => pane.classList.toggle('on', pane.id === view))
   }
+  const flash = (selector) => {
+    const element = $(selector)
+    if (element === null) return
+    element.classList.remove('flash'); void element.offsetWidth; element.classList.add('flash')
+    element.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+  }
+  let hide
+  function moment(skill, text, label, tone) {
+    const box = $('#moment')
+    box.querySelector('.skill').textContent = skill
+    box.querySelector('.text').textContent = text
+    const mark = box.querySelector('.stamp')
+    mark.className = `stamp ${tone}`; void mark.offsetWidth; mark.classList.add('land')
+    mark.textContent = label
+    box.classList.add('show')
+    clearTimeout(hide)
+    hide = setTimeout(() => box.classList.remove('show'), 5200)
+  }
+  const tryOne = (attempt) => { attempts.push({ before: best(), noise: 2, ...attempt }); renderBench(); show('bench'); flash('#chart') }
+
+  // Each entry is one skill-specific event: what the runtime saw, and what the UI does.
+  const EVENTS = [
+    ['poteto-mode'],
+    ['开启', () => { state.step = 1; state.tdd = 'off'; state.read = new Set(); renderDock(); show('playbook'); flash('#dock'); moment('poteto-mode', '认出这是 Bug fix，切成 6 步', '就位', 'gold') }],
+    ['做完一步', () => { if (state.step <= STEPS.length) state.step += 1; const skill = STEPS[state.step - 1]?.[1]; if (skill) state.read.add(skill); renderDock(); show('playbook'); flash('#fries'); moment('poteto-mode', state.step > STEPS.length ? '六步都做完了' : `进入第 ${state.step} 步`, '炸好一根', 'gold said') }],
+    ['引用了没读的原则', () => { $('#flag-eye').className = 'flag'; $('#flag-note').hidden = false; show('playbook'); flash('#flag-note'); moment('poteto-mode', '回复里提到 Explain the Number，但没读过它', '先去读', 'red') }],
+    ['护栏'],
+    ['拦下 git add -A', () => { state.blocks += 1; renderDock(); flash('#guard-row'); moment('命令护栏', 'git add -A 会把没碰过的文件也带上', '拦下', 'red') }],
+    ['tdd'],
+    ['打开门禁', () => { state.tdd = 'pending'; renderDock(); show('playbook'); flash('#tdd-stamp'); moment('tdd', '生产代码先锁上，等一次失败的测试', '等红灯', 'red') }],
+    ['见到红灯', () => { state.tdd = 'red'; renderDock(); show('playbook'); flash('#tdd-stamp'); moment('tdd', '测试失败了，可以改生产代码了', '红灯已见', 'red') }],
+    ['转绿', () => { state.tdd = 'green'; renderDock(); show('playbook'); flash('#tdd-stamp'); moment('tdd', '同一条测试命令现在通过', '已转绿', 'green') }],
+    ['arena'],
+    ['候选无输出', () => { show('panel'); flash('#seat-c'); moment('arena', '候选 C 没交回东西，按 2 个继续', '无输出', 'mute') }],
+    ['挑出裁判', () => { show('panel'); flash('#judge-note'); moment('arena', '裁判来自另一家厂商', '跨厂商', 'purple') }],
+    ['候选收敛', () => { $('#converge-note').hidden = false; show('panel'); flash('#converge-note'); moment('arena', '裁判说三个候选是同一个形状，不用嫁接', '收敛', 'gold said') }],
+    ['interrogate'],
+    ['结论成立', () => { findings.push({ title: '快速切换会话后计时器重复启动', by: 'C 发现', proven: true, run: '$ node scripts/repro-switch.mjs\n  2 timers active, expected 1' }); renderFindings(); show('panel'); flash('#findings'); moment('interrogate', '复跑它给的命令，确实失败', '成立', 'red') }],
+    ['结论丢弃', () => { dropped += 1; renderFindings(); show('panel'); flash('#findings'); moment('interrogate', '复跑它给的命令，其实通过了', '丢弃', 'mute') }],
+    ['hillclimb'],
+    ['保留', () => { tryOne({ h: '首屏只渲染可见行', after: best() - Math.round(best() * 0.08), kept: true }); moment('hillclimb', '增益超过噪声，回归测试是绿的', '保留', 'gold') }],
+    ['回滚', () => { tryOne({ h: '换一个调度优先级', after: best() - 1, kept: false, why: '在噪声内' }); moment('hillclimb', '差值在噪声里，改动已还原', '回滚', 'mute') }],
+    ['少干了活', () => { tryOne({ h: '跳过屏幕外的行', after: Math.max(44, best() - 30), kept: false, why: '工作量变了' }); moment('hillclimb', '数字好看是因为少渲染了一半的行', '回滚', 'red') }],
+    ['基准被动过', () => { const mark = $('#frozen'); mark.className = 'stamp red land'; mark.textContent = '基准被动过'; show('bench'); flash('#frozen'); moment('hillclimb', '冻结后的测量脚本哈希变了，这一轮不算数', '作废', 'red') }],
+    ['其他'],
+    ['swarm 结果不合格', () => { moment('swarm', '第 2 块的结果没写 SHA 和做法，丢掉并重派一次', '重派', 'purple') }],
+    ['Comment Sicko 开工', () => { flash('#sicko-card'); moment('comment-sicko', 'Yes... Ha ha ha... Yes!', 'MUST KILL 2', 'red said') }],
+    ['前提存疑', () => { $('#premise-note').hidden = false; show('playbook'); flash('#premise-note'); moment('attack-the-premise', '两个修法败在同一关，先检验前提', '停一下', 'gold') }],
+    ['记一行', () => { ledger.push(['验证', '注释清理后重跑了全部测试', '删注释不该改行为', 'commit c03b7e1', '测试通过']); renderLedger(); show('ledger'); flash('#rows'); moment('show-me-your-work', '决策记录多了一行', '已记', 'green') }],
+    ['有事等你', () => { document.body.toggleAttribute('data-waiting', true); flash('#ketchup-card'); moment('ketchup', '有 2 件事要你拍板', '等你', 'red said') }],
+    ['替换卡死的代理', () => { moment('autopilot', '负责 PR 3 的代理 40 分钟没有新提交，已换一个接手', '已替换', 'purple') }],
+  ]
+  $('#events').innerHTML = EVENTS.map(([name, run], i) => run === undefined ? `<span class="ev sep">${name}</span>` : `<button class="ev" data-event="${i}">${name}</button>`).join('')
+  $('#events').addEventListener('click', (event) => { const index = event.target.closest('[data-event]')?.dataset.event; if (index !== undefined) EVENTS[index][1]() })
+
   document.querySelectorAll('.seg button').forEach((button) => button.addEventListener('click', () => show(button.dataset.view)))
   document.querySelectorAll('[data-open]').forEach((element) => element.addEventListener('click', () => show(element.dataset.open)))
-  const toggle = (button, attribute) => button.addEventListener('click', () => {
-    const on = document.body.toggleAttribute(attribute)
-    button.setAttribute('aria-pressed', String(on))
-  })
-  toggle($('#annot'), 'data-annot')
-  toggle($('#theme'), 'data-dark')
-
-  // The same story the table tells: one row per attempt, kept or reverted.
-  const BASELINE = 142, TARGET = 71
-  const attempts = [
-    { hypothesis: '记忆化列表项', before: 142, after: 141, noise: 4, kept: false, why: '在噪声内' },
-    { hypothesis: '延迟加载图标', before: 142, after: 121, noise: 4, kept: true },
-    { hypothesis: '跳过首帧布局测量', before: 121, after: 118, noise: 3, kept: false, why: '门禁变红' },
-    { hypothesis: '虚拟列表减少 overscan', before: 121, after: 104, noise: 3, kept: true },
-    { hypothesis: '缓存布局测量', before: 104, after: 103, noise: 3, kept: false, why: '在噪声内' },
-    { hypothesis: '把埋点移出启动路径', before: 104, after: 89, noise: 2, kept: true },
-  ]
-  const W = 408, H = 190, L = 34, R = 10, T = 12, B = 24, LO = 60, HI = 160
-  const x = (i) => L + (i * (W - L - R)) / attempts.length
-  const y = (value) => T + ((HI - value) * (H - T - B)) / (HI - LO)
-  const el = (name, attrs) => {
-    const node = document.createElementNS('http://www.w3.org/2000/svg', name)
-    for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value)
-    return node
+  for (const [id, attribute] of [['annot', 'data-annot'], ['theme', 'data-dark']]) {
+    $('#' + id).addEventListener('click', (event) => event.currentTarget.setAttribute('aria-pressed', String(document.body.toggleAttribute(attribute))))
   }
-  const chart = $('#chart')
-  const line = 'var(--dsw-alias-border-l3)', ink = 'var(--dsw-alias-text-secondary)', brand = 'var(--dsw-alias-brand)'
-  for (const tick of [80, 100, 120, 140, 160]) {
-    chart.append(el('line', { x1: L, x2: W - R, y1: y(tick), y2: y(tick), stroke: 'var(--dsw-alias-border-l1)' }))
-    const label = el('text', { x: L - 6, y: y(tick) + 3, 'text-anchor': 'end' }); label.textContent = tick; chart.append(label)
-  }
-  chart.append(el('line', { x1: L, x2: W - R, y1: y(BASELINE), y2: y(BASELINE), stroke: line, 'stroke-dasharray': '2 3' }))
-  chart.append(el('line', { x1: L, x2: W - R, y1: y(TARGET), y2: y(TARGET), stroke: brand, 'stroke-dasharray': '2 3' }))
-  const target = el('text', { x: W - R, y: y(TARGET) - 4, 'text-anchor': 'end' }); target.textContent = '目标 71'; chart.append(target)
-  const base = el('text', { x: W - R, y: y(BASELINE) - 4, 'text-anchor': 'end' }); base.textContent = '基线 142'; chart.append(base)
-  let best = BASELINE, path = `M ${x(0)} ${y(BASELINE)}`
-  attempts.forEach((attempt, index) => {
-    if (attempt.kept) best = attempt.after
-    path += ` H ${x(index + 1)} V ${y(best)}`
-  })
-  chart.append(el('path', { d: path, fill: 'none', stroke: ink, 'stroke-width': 1.5 }))
-  attempts.forEach((attempt, index) => {
-    const cx = x(index + 1), cy = y(attempt.after)
-    chart.append(el('line', { x1: cx, x2: cx, y1: y(attempt.after + attempt.noise), y2: y(attempt.after - attempt.noise), stroke: ink }))
-    chart.append(el('circle', { cx, cy, r: 4, fill: attempt.kept ? ink : 'var(--dsw-alias-bg-base)', stroke: ink, 'stroke-width': 1.5 }))
-    const label = el('text', { x: cx, y: H - 8, 'text-anchor': 'middle' }); label.textContent = index + 1; chart.append(label)
-  })
-  const rows = $('#attempts')
-  attempts.map((attempt, index) => ({ ...attempt, id: index + 1 })).reverse().forEach((attempt) => {
-    const change = Math.round(((attempt.after - attempt.before) / attempt.before) * 100)
-    const row = rows.insertRow()
-    row.innerHTML = `<td class="num faint">${attempt.id}</td><td>${attempt.hypothesis}</td><td class="r num">${attempt.before}</td><td class="r num">${attempt.after}</td>`
-      + `<td>${attempt.kept ? `<span class="pill ok">保留 ${change}%</span>` : `<span class="pill">回滚：${attempt.why}</span>`}</td>`
-  })
+  // A stamp lands once. Without this it would land again every time its tab is shown.
+  document.addEventListener('animationend', (event) => event.target.classList.remove('land', 'flash'))
+  renderDock(); renderFindings(); renderBench(); renderLedger()
 </script>
 </body>
 </html>

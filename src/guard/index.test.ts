@@ -23,7 +23,7 @@ test('only configured shell tools carry a command', () => {
 test('a denial tells the model which command, why, and what to run instead', () => {
   const denial = denialFor(bash('cd app && git add -A'), config)
   assert.ok(denial)
-  assert.match(denial.reason, /^pstack blocked `git add -A`\./)
+  assert.match(denial.reason, /^🥔 pstack blocked `git add -A`\./)
   assert.match(denial.reason, /git add <file>/)
   assert.deepEqual(denial.info, { name: 'PstackGuardError', code: 'PSTACK_GIT_ADD_ALL' })
 })
