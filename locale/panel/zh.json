@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "pstack 多模型面板",
+    "description": "编排 Arena、Interrogate 与 Swarm：独立 git worktree、跨厂商裁判挑取、复现命令独立重跑核验。"
+  }
+}

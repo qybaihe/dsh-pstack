@@ -19,5 +19,5 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm run check
-      - name: lib/ matches src/
-        run: git diff --exit-code -- lib
+      - name: lib/ matches src/ (including untracked files)
+        run: test -z "$(git status --porcelain -- lib)" || (git status --short -- lib && git diff -- lib && exit 1)

@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "pstack 角色预设护栏",
+    "description": "为 Poteto Agent、Comment Sicko、Adversary、Cross-Judge 与 Swarm Worker 注入专属提示词与只读工具白名单。"
+  }
+}

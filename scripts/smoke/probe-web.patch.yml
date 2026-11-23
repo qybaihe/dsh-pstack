@@ -1,0 +1,15 @@
+# Overlay for scripts/smoke-dsh.mjs (web profile).
+# Binds an ephemeral port without opening a browser and mounts the smoke probe.
+- id: webserver
+  name: '@deepseek-ai/dsh-host-webserver'
+  config:
+    host: '127.0.0.1'
+    port: 0
+- id: web-runtime
+  name: '@deepseek-ai/dsh-web-app'
+  config:
+    openBrowser: false
+    printUrl: false
+- insert:
+    - id: pstack-smoke-probe
+      name: './probe.mjs'

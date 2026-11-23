@@ -26,6 +26,8 @@ export interface Measurement {
     readonly errors: number;
     /** Undefined when the harness reports no work count or the samples disagree. */
     readonly work: number | undefined;
+    /** True when samples disagreed on `work` or reported non-finite work counts. */
+    readonly workInconsistent?: boolean;
 }
 export declare function summarize(samples: readonly Sample[]): Measurement;
 export interface JudgeOptions {
@@ -62,6 +64,8 @@ export interface StopPredicate {
     /** Floor on attempts, so a lucky early win cannot end the run. */
     readonly minAttempts: number;
 }
+/** Signed target value matching `predicateMet` across positive and negative baselines. */
+export declare function computeTargetValue(baseline: number, direction: Direction, targetRelativeGain: number): number;
 export declare function predicateMet(baseline: number, current: number, direction: Direction, attempts: number, predicate: StopPredicate): boolean;
 /** A harness command and the files behind it, hashed when the harness froze. */
 export interface FrozenHarness {

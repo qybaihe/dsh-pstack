@@ -1,6 +1,13 @@
 {
   "meta": {
-    "title": "pstack shell guard",
-    "description": "Blocks git add -A, commit -a, and draft pull requests. Asks before a force push, a publish, or a deploy."
+    "title": "pstack Shell Guard",
+    "description": "Blocks git add -A, git commit -a, and draft PRs; pauses before force-pushes and deploys."
+  },
+  "config": {
+    "shellTools": "Tool names whose command argument is checked as a shell command line.",
+    "protectedBranches": "Shared branches where even --force-with-lease pauses for approval.",
+    "forbidForcePush": "Deny every force-push outright instead of asking (babysit playbook).",
+    "askPatterns": "Regular expressions for publish or deploy commands that require approval.",
+    "denyPatterns": "Regular expression deny rules (persisted via settings or /correct)."
   }
 }

@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "pstack Hillclimb Bench",
+    "description": "Freezes benchmark scripts by hash, samples median & MAD noise, checks work invariance, and commits or reverts per attempt."
+  }
+}

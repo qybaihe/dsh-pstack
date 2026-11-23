@@ -100,3 +100,16 @@ test('test commands are recognized across ecosystems', () => {
     assert.equal(isTestCommand(command), false, command)
   }
 })
+
+test('normalized paths block traversal out of test folders and echo spoofing does not count as a test run', () => {
+  const armed = play({ type: 'arm' })
+  assert.equal(decideWrite(armed, 'tests/../src/cart.ts').kind, 'deny')
+  assert.equal(decideWrite(armed, 'src/../tests/cart.test.ts').kind, 'allow')
+  assert.equal(decideWrite(armed, '../outside.test.ts').kind, 'deny')
+  assert.equal(decideWrite(armed, '/etc/passwd').kind, 'deny')
+
+  assert.equal(isTestCommand('echo "npm test" && false'), false)
+  assert.equal(isTestCommand('printf "pytest"'), false)
+  assert.equal(isTestCommand('timeout 30 pnpm test'), true)
+  assert.equal(isTestCommand('env CI=1 vitest run'), true)
+})

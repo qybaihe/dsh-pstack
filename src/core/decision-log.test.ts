@@ -65,6 +65,20 @@ test('the audit flags rows with no evidence, and never a start row', () => {
   assert.deepEqual(rowsWithoutEvidence(rows), [rows[1]])
 })
 
+test('a later evidenced row superseding an earlier empty-evidence row clears the audit flag', () => {
+  const rowsByDecision = [
+    row({ decision: 'drop legacy cache', evidence: '' }),
+    row({ decision: 'drop legacy cache', evidence: 'src/cache.ts:42' }),
+  ]
+  assert.deepEqual(rowsWithoutEvidence(rowsByDecision), [])
+
+  const rowsByIndexRef = [
+    row({ decision: 'initial call', evidence: '' }),
+    row({ decision: 'supersede #1 with repro', evidence: 'commit 91ab23c' }),
+  ]
+  assert.deepEqual(rowsWithoutEvidence(rowsByIndexRef), [])
+})
+
 const upstreamScript = join(import.meta.dirname, '../../vendor/pstack/skills/show-me-your-work/scripts/log.sh')
 
 test('rows match the ones pstack log.sh writes', { skip: !existsSync(upstreamScript) }, () => {

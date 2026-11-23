@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "pstack 决策账本与原则审计",
+    "description": "维护只追加的 TSV 决策记录（pstack_log）、Comment Sicko 注释审查，并在回合结束前校验原则引用与证据。"
+  }
+}

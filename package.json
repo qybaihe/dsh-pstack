@@ -1,8 +1,10 @@
 {
   "name": "@qybaihe/dsh-pstack",
-  "version": "0.0.1",
-  "description": "pstack for DeepSeek Harness: poteto-mode's skills, with the rules a harness can enforce moved out of the prompt and into the runtime.",
+  "version": "0.1.0",
+  "description": "pstack for DeepSeek Harness: poteto-mode's skills, runtime enforcement (guard, TDD, playbook, ledger, multi-model panel, hillclimb bench, autopilot), and potato Web/Desktop UI.",
   "type": "module",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -22,6 +24,11 @@
     "skills"
   ],
   "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./client": "./lib/client.js",
     "./skills": {
       "types": "./lib/skills/index.d.ts",
       "default": "./lib/skills/index.js"
@@ -30,9 +37,44 @@
       "types": "./lib/guard/index.d.ts",
       "default": "./lib/guard/index.js"
     },
+    "./playbook": {
+      "types": "./lib/playbook/index.d.ts",
+      "default": "./lib/playbook/index.js"
+    },
+    "./tdd": {
+      "types": "./lib/tdd/index.d.ts",
+      "default": "./lib/tdd/index.js"
+    },
+    "./ledger": {
+      "types": "./lib/ledger/index.d.ts",
+      "default": "./lib/ledger/index.js"
+    },
+    "./panel": {
+      "types": "./lib/panel/index.d.ts",
+      "default": "./lib/panel/index.js"
+    },
+    "./bench": {
+      "types": "./lib/bench/index.d.ts",
+      "default": "./lib/bench/index.js"
+    },
+    "./autopilot": {
+      "types": "./lib/autopilot/index.d.ts",
+      "default": "./lib/autopilot/index.js"
+    },
+    "./preset-role": {
+      "types": "./lib/preset-role/index.d.ts",
+      "default": "./lib/preset-role/index.js"
+    },
     "./locale/*.json": "./locale/*.json",
     "./skills/locale/*.json": "./locale/skills/*.json",
     "./guard/locale/*.json": "./locale/guard/*.json",
+    "./playbook/locale/*.json": "./locale/playbook/*.json",
+    "./tdd/locale/*.json": "./locale/tdd/*.json",
+    "./ledger/locale/*.json": "./locale/ledger/*.json",
+    "./panel/locale/*.json": "./locale/panel/*.json",
+    "./bench/locale/*.json": "./locale/bench/*.json",
+    "./autopilot/locale/*.json": "./locale/autopilot/*.json",
+    "./preset-role/locale/*.json": "./locale/preset-role/*.json",
     "./icon": "./icon.svg",
     "./package.json": "./package.json"
   },
@@ -41,30 +83,48 @@
     "vendor",
     "locale",
     "cordis.patch.yml",
-    "icon.svg"
+    "icon.svg",
+    "README.md",
+    "LICENSE"
   ],
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-ui-renderer",
+        "@deepseek-ai/dsh-client-ui-sidebar-right"
+      ]
     }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "node --test \"src/**/*.test.ts\"",
+    "build:host": "tsc -p tsconfig.build.json",
+    "build:client": "node scripts/build-client.mjs",
+    "build": "pnpm run build:host && pnpm run build:client",
+    "prepack": "pnpm run build",
+    "typecheck:host": "tsc -p tsconfig.json --noEmit",
+    "typecheck:client": "tsc -p client/tsconfig.json --noEmit",
+    "typecheck": "pnpm run typecheck:host && pnpm run typecheck:client",
+    "test": "pnpm run build:client && node --test \"src/**/*.test.ts\"",
     "check": "pnpm run typecheck && pnpm run test && pnpm run build",
     "smoke": "pnpm run build && node scripts/smoke-dsh.mjs",
     "sync:pstack": "node scripts/sync-pstack.mjs"
   },
   "engines": {
     "node": ">=24.9.0",
-    "dsh": "^0.2.2-rc.5"
+    "dsh": ">=0.2.2-rc.0 <0.3.0"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "~4.1.0",
-    "@deepseek-ai/dsh-skill": "^0.2.2-rc.5",
-    "@deepseek-ai/dsh-tools": "^0.2.2-rc.5",
-    "@deepseek-ai/schemastery": "~3.19.0"
+    "@deepseek-ai/cordis": "*",
+    "@deepseek-ai/dsh-agent": "*",
+    "@deepseek-ai/dsh-skill": "*",
+    "@deepseek-ai/dsh-system-prompt": "*",
+    "@deepseek-ai/dsh-tools": "*",
+    "@deepseek-ai/schemastery": "*"
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "~4.1.0",
@@ -74,6 +134,9 @@
     "@deepseek-ai/dsh-tools": "0.2.2-rc.5",
     "@deepseek-ai/schemastery": "~3.19.0",
     "@types/node": "^26.6.6",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "esbuild": "^0.28.2",
     "typescript": "^7.0.2"
   }
 }

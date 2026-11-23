@@ -3,8 +3,29 @@
 # restate the row by id in your profile's own cordis.patch.yml.
 
 - insert:
+    - id: pstack
+      name: '@qybaihe/dsh-pstack'
+
     - id: pstack-skills
       name: '@qybaihe/dsh-pstack/skills'
 
     - id: pstack-guard
       name: '@qybaihe/dsh-pstack/guard'
+
+    - id: pstack-playbook
+      name: '@qybaihe/dsh-pstack/playbook'
+
+    - id: pstack-tdd
+      name: '@qybaihe/dsh-pstack/tdd'
+
+    - id: pstack-ledger
+      name: '@qybaihe/dsh-pstack/ledger'
+
+    - id: pstack-panel
+      name: '@qybaihe/dsh-pstack/panel'
+
+    - id: pstack-bench
+      name: '@qybaihe/dsh-pstack/bench'
+
+    - id: pstack-autopilot
+      name: '@qybaihe/dsh-pstack/autopilot'

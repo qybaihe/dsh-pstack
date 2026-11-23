@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "pstack Autopilot & Self-Hardening",
+    "description": "Scheduled patrols, stalled worker replacement, Ketchup decision cards, checkpoints, and live /correct rule persistence."
+  }
+}

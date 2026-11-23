@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "pstack Playbook 编排",
+    "description": "识别当前 Playbook 并写入步骤，在 Babysit 期间禁止强推，在 Investigation 期间锁定写文件工具。"
+  }
+}

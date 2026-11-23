@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "pstack TDD 门禁",
+    "description": "通过 /tdd on 开启先红后绿门禁：未观察到失败测试运行前拦截对生产代码的写入。"
+  }
+}

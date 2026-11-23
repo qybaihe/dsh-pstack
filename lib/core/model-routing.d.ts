@@ -17,6 +17,13 @@ export interface ModelRoute {
 }
 /** A panel entry: a route, or the parent chat's own model. */
 export type Seat = ModelRoute | 'inherit-parent';
+/** Parse `inherit-parent`, `auto`, `provider/model`, or `provider/model@effort` identically on host and client. */
+export declare function parseSeatSpec(raw: string): Seat;
+/** Parse manual `provider/model=vendor` override lines and report malformed non-empty lines. */
+export declare function parseVendorOverridesText(text: string): {
+    readonly overrides: Record<string, string>;
+    readonly invalidLines: string[];
+};
 /**
  * The vendor of a route, or undefined when nothing identifies it. `overrides`
  * maps `provider/model` or `provider` to a vendor and wins over every guess.

@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "pstack Ledger & Citation Audit",
+    "description": "Append-only TSV decision log (pstack_log), Comment Sicko audits, and pre-close checks for unread principle citations."
+  }
+}

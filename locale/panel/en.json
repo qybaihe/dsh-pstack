@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "pstack Multi-Model Panel",
+    "description": "Orchestrates Arena, Interrogate, and Swarm with isolated worktrees, cross-vendor judging, and repro command verification."
+  }
+}

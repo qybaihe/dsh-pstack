@@ -44,6 +44,14 @@ export interface TddOptions {
     readonly testCommands: readonly string[];
 }
 export declare const DEFAULT_TDD_OPTIONS: TddOptions;
+/**
+ * Canonicalize a file path using POSIX segments so `tests/../src/a.ts` resolves
+ * to `src/a.ts` and `../outside.ts` is flagged as escaping the workspace root.
+ */
+export declare function normalizePathForGate(rawPath: string): {
+    readonly normalized: string;
+    readonly escapesRoot: boolean;
+};
 export declare const isTestPath: (path: string, options?: TddOptions) => boolean;
 export declare const isTestCommand: (command: string, options?: TddOptions) => boolean;
 export type WriteDecision = {

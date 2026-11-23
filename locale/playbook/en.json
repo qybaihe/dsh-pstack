@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "pstack Playbook",
+    "description": "Detects the active playbook, seeds native todo steps, forbids force-push in babysit, and locks writes during investigation."
+  }
+}

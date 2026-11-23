@@ -28,5 +28,9 @@ export declare function parseLog(text: string): DecisionRow[];
  * at one of its `start` rows, and end at another run's `start` row.
  */
 export declare function rowsOfRun(rows: readonly DecisionRow[], isOwnStart: (row: DecisionRow) => boolean, createdLog: boolean): DecisionRow[];
-/** Rows whose evidence cell is empty, which the audit flags before handing back. */
+/**
+ * Rows whose evidence cell is empty and have not been superseded by a later
+ * evidenced row (matching the same decision or explicitly citing `#<rowNumber>`
+ * / `row <rowNumber>`). `start` rows are never flagged.
+ */
 export declare function rowsWithoutEvidence(rows: readonly DecisionRow[]): DecisionRow[];

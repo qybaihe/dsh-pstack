@@ -1,6 +1,13 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { DEFAULT_SHELL_POLICY, classifyShellCommand, simpleCommands, tokenize } from './shell-policy.ts'
+import {
+  DEFAULT_SHELL_POLICY,
+  classifyShellCommand,
+  shellWriteTargets,
+  simpleCommands,
+  tokenize,
+  unwrapCommandWords,
+} from './shell-policy.ts'
 
 const verdict = (command: string, overrides: Partial<typeof DEFAULT_SHELL_POLICY> = {}) =>
   classifyShellCommand(command, { ...DEFAULT_SHELL_POLICY, ...overrides })
@@ -125,4 +132,21 @@ test('a deny names the offending command and what to run instead', () => {
   if (result.kind !== 'deny') return
   assert.equal(result.command, 'git add -A')
   assert.match(result.instead, /git add <file>/)
+})
+
+test('quoted operators do not split commands, while double-quoted command substitutions are still inspected', () => {
+  assert.equal(kind('echo "hello && git add -A"'), 'allow')
+  assert.equal(kind("echo 'hello; git commit -a -m x'"), 'allow')
+  assert.equal(rule('echo "$(git add -A)"'), 'git-add-all')
+  assert.equal(rule('echo "`git add .`"'), 'git-add-all')
+})
+
+test('wrapper commands, git push --repo, malformed regexes, and shellWriteTargets are handled safely', () => {
+  assert.equal(rule('timeout 30 git add -A'), 'git-add-all')
+  assert.equal(rule('sudo -u root git commit -a -m wip'), 'git-commit-all')
+  assert.deepEqual(unwrapCommandWords(['env', 'FOO=1', 'timeout', '-k', '5s', '30s', 'pnpm', 'test']), ['pnpm', 'test'])
+  assert.equal(kind('git push --repo origin --force-with-lease main'), 'ask')
+  assert.equal(kind('npm publish', { askPatterns: ['[invalid-regex('] }), 'allow')
+  assert.deepEqual(shellWriteTargets('echo x > src/a.ts && cat y | tee out.js'), ['src/a.ts', 'out.js'])
+  assert.deepEqual(shellWriteTargets('sed -i "" "s/a/b/" bench.mjs && dd if=/dev/zero of=dump.bin'), ['bench.mjs', 'dump.bin'])
 })

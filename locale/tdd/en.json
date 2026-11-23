@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "pstack TDD Gate",
+    "description": "Enforces red-before-write via /tdd on: blocks production file writes until a failing test run is observed."
+  }
+}

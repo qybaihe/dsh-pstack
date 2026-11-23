@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "pstack 无人值守与自演进",
+    "description": "定时巡检、卡死子代理检测与替换、Ketchup 待决面板、检查点存档，以及 /correct 护栏规则热写回。"
+  }
+}

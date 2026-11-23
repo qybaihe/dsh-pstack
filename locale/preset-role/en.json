@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "pstack preset role guard",
+    "description": "Injects persona instructions and strict read-only tool allowlists for pstack subagent presets."
+  }
+}

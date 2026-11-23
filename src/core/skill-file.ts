@@ -23,10 +23,11 @@ function unquote(value: string): string {
   if (value.length >= 2 && value.startsWith("'") && value.endsWith("'")) {
     return value.slice(1, -1).replace(/''/g, "'")
   }
-  return value
+  // Strip trailing YAML inline comment (`true # operator-only`) on unquoted scalars
+  return value.replace(/[ \t]+#.*$/, '').trim()
 }
 
-const BLOCK_SCALAR = /^[|>][+-]?$/
+const BLOCK_SCALAR = /^[|>][+-]?([ \t]+#.*)?$/
 
 /** Read `key: >-` and `key: |` values: the indented lines that follow the key. */
 function readBlock(lines: readonly string[], start: number, folded: boolean): { value: string; next: number } {
@@ -48,7 +49,9 @@ export function parseSkillFile(text: string): SkillFile | undefined {
   const fields = new Map<string, string>()
   const lines = source.slice(4, end).split('\n')
   for (let i = 0; i < lines.length; i += 1) {
-    const match = FIELD.exec(lines[i] as string)
+    const line = lines[i] as string
+    if (line.trim().startsWith('#')) continue
+    const match = FIELD.exec(line)
     if (match === null) continue
     const raw = (match[2] as string).trim()
     if (BLOCK_SCALAR.test(raw)) {
@@ -59,11 +62,12 @@ export function parseSkillFile(text: string): SkillFile | undefined {
   }
   const name = fields.get('name')
   if (name === undefined || name === '') return undefined
+  const disableModel = fields.get('disable-model-invocation')?.toLowerCase()
   const afterFence = source.indexOf('\n', end + 1)
   return {
     name,
     description: fields.get('description') ?? '',
-    modelInvocable: fields.get('disable-model-invocation') !== 'true',
+    modelInvocable: disableModel !== 'true' && disableModel !== 'yes',
     body: afterFence === -1 ? '' : source.slice(afterFence + 1).replace(/^\n+/, ''),
   }
 }

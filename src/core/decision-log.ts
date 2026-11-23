@@ -64,7 +64,23 @@ export function rowsOfRun(rows: readonly DecisionRow[], isOwnStart: (row: Decisi
   return own
 }
 
-/** Rows whose evidence cell is empty, which the audit flags before handing back. */
+/**
+ * Rows whose evidence cell is empty and have not been superseded by a later
+ * evidenced row (matching the same decision or explicitly citing `#<rowNumber>`
+ * / `row <rowNumber>`). `start` rows are never flagged.
+ */
 export function rowsWithoutEvidence(rows: readonly DecisionRow[]): DecisionRow[] {
-  return rows.filter((row) => row.phase !== 'start' && row.evidence.trim() === '')
+  return rows.filter((row, index) => {
+    if (row.phase === 'start' || row.evidence.trim() !== '') return false
+    const rowNumber = index + 1
+    const normDecision = row.decision.trim().toLowerCase()
+    const rowRef = new RegExp(`(?:^|\\W)(?:supersedes\\s+#?|row\\s+#?|#)${rowNumber}\\b`, 'i')
+    for (let j = index + 1; j < rows.length; j += 1) {
+      const later = rows[j]!
+      if (later.evidence.trim() === '') continue
+      if (normDecision !== '' && later.decision.trim().toLowerCase() === normDecision) return false
+      if (rowRef.test(later.decision) || rowRef.test(later.why) || rowRef.test(later.result)) return false
+    }
+    return true
+  })
 }

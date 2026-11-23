@@ -1,6 +1,15 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { DEFAULT_JUDGE_OPTIONS, harnessDrift, judgeAttempt, median, predicateMet, scaledMad, summarize } from './experiment.ts'
+import {
+  DEFAULT_JUDGE_OPTIONS,
+  computeTargetValue,
+  harnessDrift,
+  judgeAttempt,
+  median,
+  predicateMet,
+  scaledMad,
+  summarize,
+} from './experiment.ts'
 import type { Sample } from './experiment.ts'
 
 const samples = (values: readonly number[], extra: Omit<Sample, 'value'> = {}): Sample[] =>
@@ -94,4 +103,17 @@ test('harness drift names every frozen file that changed or vanished', () => {
   const frozen = { command: 'node bench.mjs', files: { 'bench.mjs': 'aaa', 'fixtures/big.json': 'bbb', 'bench.config.json': 'ccc' } }
   assert.deepEqual(harnessDrift(frozen, { 'bench.mjs': 'aaa', 'fixtures/big.json': 'bbb', 'bench.config.json': 'ccc' }), [])
   assert.deepEqual(harnessDrift(frozen, { 'bench.mjs': 'zzz', 'bench.config.json': 'ccc' }), ['bench.mjs', 'fixtures/big.json'])
+})
+
+test('both runs having inconsistent work still revert as work-changed, and negative baselines compute signed targets', () => {
+  const inconsistentBefore = summarize([...samples([100, 100, 100, 100], { work: 10 }), { value: 100, work: 11 }])
+  const inconsistentAfter = summarize([...samples([50, 50, 50, 50], { work: 10 }), { value: 50, work: 12 }])
+  assert.equal(inconsistentBefore.workInconsistent, true)
+  assert.equal(inconsistentAfter.workInconsistent, true)
+  const verdict = judgeAttempt(inconsistentBefore, inconsistentAfter, true, lower)
+  assert.equal(verdict.kind === 'reverted' ? verdict.reason : undefined, 'work-changed')
+
+  assert.equal(computeTargetValue(-100, 'higher', 0.2), -80)
+  assert.equal(computeTargetValue(-100, 'lower', 0.2), -120)
+  assert.equal(predicateMet(-100, -75, 'higher', 5, { targetRelativeGain: 0.2, minAttempts: 5 }), true)
 })

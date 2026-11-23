@@ -39,18 +39,29 @@ export interface Measurement {
   readonly errors: number
   /** Undefined when the harness reports no work count or the samples disagree. */
   readonly work: number | undefined
+  /** True when samples disagreed on `work` or reported non-finite work counts. */
+  readonly workInconsistent?: boolean
 }
 
 export function summarize(samples: readonly Sample[]): Measurement {
   const values = samples.map((sample) => sample.value)
   const works = new Set(samples.map((sample) => sample.work))
   const [work] = works
+  const anyWorkReported = samples.some((sample) => sample.work !== undefined)
+  const invalidWorkValue = samples.some((sample) => sample.work !== undefined && !Number.isFinite(sample.work))
+  const workInconsistent = (anyWorkReported && works.size > 1) || invalidWorkValue
+  const errors = samples.reduce((sum, sample) => {
+    if (sample.errors === undefined) return sum
+    if (!Number.isFinite(sample.errors) || sample.errors < 0) return sum + 1
+    return sum + sample.errors
+  }, 0)
   return {
     count: samples.length,
     median: median(values),
     spread: scaledMad(values),
-    errors: samples.reduce((sum, sample) => sum + (sample.errors ?? 0), 0),
-    work: works.size === 1 ? work : undefined,
+    errors,
+    work: !workInconsistent && works.size === 1 ? work : undefined,
+    ...(workInconsistent ? { workInconsistent: true } : {}),
   }
 }
 
@@ -94,15 +105,15 @@ export function judgeAttempt(
 ): AttemptVerdict {
   const gain = options.direction === 'lower' ? before.median - after.median : after.median - before.median
   const relativeGain = before.median === 0 ? 0 : gain / Math.abs(before.median)
-  const noise = Math.max(
-    options.noiseFactor * Math.max(before.spread, after.spread),
-    options.minRelativeGain * Math.abs(before.median),
-  )
+  const minFloor = before.median === 0 ? options.minRelativeGain : options.minRelativeGain * Math.abs(before.median)
+  const noise = Math.max(options.noiseFactor * Math.max(before.spread, after.spread), minFloor)
   const reverted = (reason: RevertReason): AttemptVerdict => ({ kind: 'reverted', reason, gain, relativeGain, noise })
 
   if (before.count < options.minSamples || after.count < options.minSamples) return reverted('too-few-samples')
-  if (after.errors > 0) return reverted('harness-errors')
-  if (before.work !== after.work) return reverted('work-changed')
+  if (after.errors > 0 || before.errors > 0) return reverted('harness-errors')
+  if (before.workInconsistent === true || after.workInconsistent === true || before.work !== after.work) {
+    return reverted('work-changed')
+  }
   if (!gateGreen) return reverted('gate-red')
   if (gain < 0) return reverted('regressed')
   if (gain <= noise) return reverted('within-noise')
@@ -114,6 +125,12 @@ export interface StopPredicate {
   readonly targetRelativeGain: number
   /** Floor on attempts, so a lucky early win cannot end the run. */
   readonly minAttempts: number
+}
+
+/** Signed target value matching `predicateMet` across positive and negative baselines. */
+export function computeTargetValue(baseline: number, direction: Direction, targetRelativeGain: number): number {
+  const delta = Math.abs(baseline) * targetRelativeGain
+  return direction === 'lower' ? baseline - delta : baseline + delta
 }
 
 export function predicateMet(

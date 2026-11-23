@@ -1,6 +1,14 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { effortForBudget, panelVendors, pickCrossJudge, supportedEffort, vendorOf } from './model-routing.ts'
+import {
+  effortForBudget,
+  panelVendors,
+  parseSeatSpec,
+  parseVendorOverridesText,
+  pickCrossJudge,
+  supportedEffort,
+  vendorOf,
+} from './model-routing.ts'
 import type { ModelRoute, Seat } from './model-routing.ts'
 
 const route = (provider: string, model: string): ModelRoute => ({ provider, model })
@@ -92,4 +100,14 @@ test('a model gets the highest effort it supports at or below the target', () =>
   assert.equal(supportedEffort('high', ['low', 'high', 'max']), 'high')
   assert.equal(supportedEffort('medium', ['high', 'xhigh']), undefined)
   assert.equal(supportedEffort('xhigh', []), undefined)
+})
+
+test('parseSeatSpec and parseVendorOverridesText share one exact grammar across host and client', () => {
+  assert.equal(parseSeatSpec('auto'), 'inherit-parent')
+  assert.equal(parseSeatSpec('inherit-parent'), 'inherit-parent')
+  assert.deepEqual(parseSeatSpec('openai/gpt-5@xhigh'), { provider: 'openai', model: 'gpt-5', effort: 'xhigh' })
+
+  const parsed = parseVendorOverridesText('# comment\nmy-gw/m1=anthropic\nmalformed-line\nempty=\n')
+  assert.deepEqual(parsed.overrides, { 'my-gw/m1': 'anthropic' })
+  assert.deepEqual(parsed.invalidLines, ['malformed-line', 'empty='])
 })

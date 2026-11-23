@@ -1,6 +1,13 @@
 {
   "meta": {
     "title": "pstack 命令护栏",
-    "description": "拦截 git add -A、commit -a 和草稿 PR。强推、发布、部署之前先向你确认。"
+    "description": "拦截 git add -A、git commit -a、草稿 PR 等常见失手；强推和部署前先问过你。"
+  },
+  "config": {
+    "shellTools": "视为 shell 调用的工具名，检查其 command 参数。",
+    "protectedBranches": "即使带了 --force-with-lease，推向这些共享分支时仍然先询问。",
+    "forbidForcePush": "一律拒绝强推，而不询问（对应 babysit playbook）。",
+    "askPatterns": "匹配发布或部署命令的正则表达式，命中时先询问。",
+    "denyPatterns": "直接否决命令的正则表达式规则（支持通过 /correct 在线写入）。"
   }
 }

@@ -41,13 +41,31 @@ export interface ShellPolicyOptions {
     readonly askPatterns: readonly string[];
 }
 export declare const DEFAULT_SHELL_POLICY: ShellPolicyOptions;
+export interface LexToken {
+    readonly kind: 'word' | 'op' | 'redir';
+    readonly value: string;
+}
+/** Compile a user-supplied regex safely without throwing on malformed syntax. */
+export declare function safeRegExp(source: string): RegExp | undefined;
+/**
+ * Lex a command line into typed tokens (`word`, `op`, `redir`) plus any command
+ * substitutions (`$(...)` or backticks) embedded inside double-quoted strings.
+ */
+export declare function lexShell(input: string): {
+    readonly tokens: LexToken[];
+    readonly embeddedScripts: string[];
+};
 /**
  * Split a command line into words and operators. Quotes group, backslash
  * escapes, `$(` and backticks open a nested command that is checked too.
  */
 export declare function tokenize(input: string): string[];
-/** Group tokens into simple commands, dropping the operators between them. */
+/** Group tokens into simple commands, dropping operators and redirect targets while preserving quoted operators. */
 export declare function simpleCommands(input: string): string[][];
+/** Drop leading `VAR=value` words, wrapper commands, and the wrappers' flags/arguments. */
+export declare function unwrapCommandWords(words: readonly string[]): string[];
+/** Extract candidate file paths mutated by shell redirects or common file-mutating utilities. */
+export declare function shellWriteTargets(input: string): string[];
 /**
  * Classify a whole command line. A deny anywhere wins over an ask, and an ask
  * wins over allow, so one bad link fails the chain.
